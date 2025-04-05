@@ -47,8 +47,8 @@ module.exports = {
     if (subcommand === 'challenge') {
       const challenger = interaction.user;
       const opponent = interaction.options.getUser('opponent');
-      console.log(challenger);
-      console.log(opponent);
+      const challengerMember = await interaction.guild.members.fetch(challenger.id);
+      const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
       if (challenger.id === opponent.id) {
         return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
@@ -62,18 +62,28 @@ module.exports = {
       // Set timeout to auto-remove the challenge after 2 minutes
       const timeoutId = setTimeout(() => {
         pendingChallenges.delete(opponent.id);
-        console.log(`⚠️ Challenge to ${opponent.username} from ${challenger.username} timed out.`);
+      
+        (async () => {
+          try {
+            const freshChallenger = await interaction.guild.members.fetch(challenger.id);
+            const freshOpponent = await interaction.guild.members.fetch(opponent.id);
+            console.log(`⚠️ Challenge to ${freshOpponent.displayName} from ${freshChallenger.displayName} timed out.`);
+          } catch (err) {
+            console.error('⚠️ Error fetching member data during timeout cleanup:', err);
+          }
+        })();
       }, 2 * 60 * 1000); // 2 minutes
+      
 
       pendingChallenges.set(opponent.id, { challengerId: challenger.id, timeoutId });
 
-      return interaction.reply(`🎴 **${challenger.username}** has challenged **${opponent.username}** to a high-card duel!\n` +
+      return interaction.reply(`🎴 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a high-card duel!\n` +
         `${opponent}, type \`/highcard accept\` within 2 minutes to draw your card!`);
     }
 
     if (subcommand === 'accept') {
-      const user = interaction.user;
-      const challengeData = pendingChallenges.get(user.id);
+      const opponent = interaction.user;
+      const challengeData = pendingChallenges.get(opponent.id);
 
       if (!challengeData) {
         return interaction.reply({ content: '❌ You have no pending challenges.', ephemeral: true });
@@ -82,8 +92,11 @@ module.exports = {
       const challengerId = challengeData.challengerId;
       const challenger = await interaction.client.users.fetch(challengerId);
 
+      const challengerMember = await interaction.guild.members.fetch(challenger.id);
+      const opponentMember = await interaction.guild.members.fetch(opponent.id);
+
       clearTimeout(challengeData.timeoutId);
-      pendingChallenges.delete(user.id);
+      pendingChallenges.delete(opponent.id);
 
       const deck = getDeck();
       const card1 = deck.splice(Math.floor(Math.random() * deck.length), 1)[0];
@@ -94,17 +107,17 @@ module.exports = {
 
       let result = '';
       if (value1 > value2) {
-        result = `🏆 **${challenger.username}** wins with the ${cardToString(card1)}!`;
+        result = `🏆 **${challengerMember.displayName}** wins with the ${cardToString(card1)}!`;
       } else if (value2 > value1) {
-        result = `🏆 **${user.username}** wins with the ${cardToString(card2)}!`;
+        result = `🏆 **${opponentMember.displayName}** wins with the ${cardToString(card2)}!`;
       } else {
         result = `🤯 It's a tie! You both drew ${cardToString(card1)}. That's mad!`;
       }
 
       await interaction.reply({
         content: `🃏 **High Card Duel Result!**\n\n` +
-          `**${challenger.username}** drew the **${cardToString(card1)}**\n` +
-          `**${user.username}** drew the **${cardToString(card2)}**\n\n` +
+          `**${challengerMember.displayName}** drew the **${cardToString(card1)}**\n` +
+          `**${opponentMember.displayName}** drew the **${cardToString(card2)}**\n\n` +
           result
       });
     }
