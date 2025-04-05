@@ -30,17 +30,21 @@ module.exports = {
       .sort((a, b) => a.sort - b.sort)
       .map(c => c.choice);
 
-    const correctLetter = ['A', 'B', 'C', 'D'][shuffledChoices.indexOf(q.answer)];
+    // Generate choice letters based on available options
+    const choiceLetters = shuffledChoices.map((_, i) => String.fromCharCode(65 + i)); // ['A', 'B', ...]
 
-    const choiceLines = shuffledChoices.map((c, i) => `**${String.fromCharCode(65 + i)}.** ${c}`).join('\n');
+    const choiceLines = shuffledChoices.map((c, i) => `**${choiceLetters[i]}.** ${c}`).join('\n');
 
+    // In reply:
     await interaction.reply({
-      content: `🧠 **New Mexico Trivia!**\n\n${q.question}\n\n${choiceLines}\n\nType your answer (A, B, C, or D) below.`,
+    content: `🧠 **New Mexico Trivia!**\n\n${q.question}\n\n${choiceLines}\n\nType your answer (${choiceLetters.join('/')}) below.`
     });
 
+    // Adjusted filter:
     const filter = m =>
-      m.author.id === interaction.user.id &&
-      ['a', 'b', 'c', 'd'].includes(m.content.toLowerCase());
+    m.author.id === interaction.user.id &&
+    choiceLetters.map(letter => letter.toLowerCase()).includes(m.content.toLowerCase());
+
 
     try {
       const collected = await interaction.channel.awaitMessages({
