@@ -1,9 +1,10 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
-const suits = ['♠ Spades', '♥ Hearts', '♦ Diamonds', '♣ Clubs'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs'];
+const suitCodes = { Spades: 'S', Hearts: 'H', Diamonds: 'D', Clubs: 'C' };
 
-let pendingChallenges = new Map(); // key: opponentId, value: { challengerId, timeoutId }
+let pendingChallenges = new Map();
 
 function getDeck() {
   const deck = [];
@@ -15,8 +16,9 @@ function getDeck() {
   return deck;
 }
 
-function cardToString(card) {
-  return `${card.value} of ${card.suit}`;
+function getCardCode(card) {
+  const valueCode = card.value === '10' ? '0' : card.value[0].toUpperCase();
+  return `${valueCode}${suitCodes[card.suit]}`;
 }
 
 function getCardValue(card) {
@@ -54,31 +56,26 @@ module.exports = {
         return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
       }
 
-      // Check if opponent already has a pending challenge
       if (pendingChallenges.has(opponent.id)) {
         return interaction.reply({ content: '❌ That user already has a pending challenge.', ephemeral: true });
       }
 
-      // Set timeout to auto-remove the challenge after 2 minutes
       const timeoutId = setTimeout(() => {
         pendingChallenges.delete(opponent.id);
-      
-        (async () => {
-          try {
-            const freshChallenger = await interaction.guild.members.fetch(challenger.id);
-            const freshOpponent = await interaction.guild.members.fetch(opponent.id);
-            console.log(`⚠️ Challenge to ${freshOpponent.displayName} from ${freshChallenger.displayName} timed out.`);
-          } catch (err) {
-            console.error('⚠️ Error fetching member data during timeout cleanup:', err);
-          }
-        })();
-      }, 2 * 60 * 1000); // 2 minutes
-      
+        interaction.followUp({
+          content: `⌛ Challenge from **${challengerMember.displayName}** to **${opponentMember.displayName}** timed out.`
+        }).catch(() => {});
+      }, 2 * 60 * 1000); // 2 min
 
       pendingChallenges.set(opponent.id, { challengerId: challenger.id, timeoutId });
 
-      return interaction.reply(`🎴 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a high-card duel!\n` +
-        `${opponent}, type \`/highcard accept\` within 2 minutes to draw your card!`);
+      const embed = new EmbedBuilder()
+        .setTitle('🎴 High Card Challenge!')
+        .setDescription(`**${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a duel!`)
+        .setColor(0x9B59B6)
+        .setFooter({ text: `${opponentMember.displayName}, type /highcard accept within 2 minutes!` });
+
+      return interaction.reply({ embeds: [embed] });
     }
 
     if (subcommand === 'accept') {
@@ -89,9 +86,7 @@ module.exports = {
         return interaction.reply({ content: '❌ You have no pending challenges.', ephemeral: true });
       }
 
-      const challengerId = challengeData.challengerId;
-      const challenger = await interaction.client.users.fetch(challengerId);
-
+      const challenger = await interaction.client.users.fetch(challengeData.challengerId);
       const challengerMember = await interaction.guild.members.fetch(challenger.id);
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
@@ -102,24 +97,39 @@ module.exports = {
       const card1 = deck.splice(Math.floor(Math.random() * deck.length), 1)[0];
       const card2 = deck[Math.floor(Math.random() * deck.length)];
 
+      const card1Code = getCardCode(card1);
+      const card2Code = getCardCode(card2);
+
       const value1 = getCardValue(card1);
       const value2 = getCardValue(card2);
 
       let result = '';
       if (value1 > value2) {
-        result = `🏆 **${challengerMember.displayName}** wins with the ${cardToString(card1)}!`;
+        result = `🏆 **${challengerMember.displayName}** wins with the **${card1.value} of ${card1.suit}**!`;
       } else if (value2 > value1) {
-        result = `🏆 **${opponentMember.displayName}** wins with the ${cardToString(card2)}!`;
+        result = `🏆 **${opponentMember.displayName}** wins with the **${card2.value} of ${card2.suit}**!`;
       } else {
-        result = `🤯 It's a tie! You both drew ${cardToString(card1)}. That's mad!`;
+        result = `🤯 It's a tie! You both drew **${card1.value} of ${card1.suit}**. Madness.`;
       }
 
-      await interaction.reply({
-        content: `🃏 **High Card Duel Result!**\n\n` +
-          `**${challengerMember.displayName}** drew the **${cardToString(card1)}**\n` +
-          `**${opponentMember.displayName}** drew the **${cardToString(card2)}**\n\n` +
-          result
-      });
+      const resultEmbed = new EmbedBuilder()
+        .setTitle('🃏 High Card Duel Result')
+        .setDescription(result)
+        .setColor(0x1ABC9C)
+        .addFields(
+          {
+            name: challengerMember.displayName,
+            value: `![${card1.value}](https://deckofcardsapi.com/static/img/${card1Code}.png)`,
+            inline: true,
+          },
+          {
+            name: opponentMember.displayName,
+            value: `![${card2.value}](https://deckofcardsapi.com/static/img/${card2Code}.png)`,
+            inline: true,
+          }
+        );
+
+      await interaction.reply({ embeds: [resultEmbed] });
     }
   }
 };
