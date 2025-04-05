@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs'];
@@ -53,16 +53,22 @@ module.exports = {
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
       if (challenger.id === opponent.id) {
-        const allowedRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
-        console.log(allowedRole);
-        if (!allowedRole || !challengerMember.roles.cache.has(allowedRole.id)) {
-          return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
+        const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
+        const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
+
+        if (!hasTesterRole) {
+          return interaction.reply({
+            content: '❌ You can’t challenge yourself, mate.',
+            flags: MessageFlags.Ephemeral
+          });
         }
       }
-      
 
       if (pendingChallenges.has(opponent.id)) {
-        return interaction.reply({ content: '❌ That user already has a pending challenge.', ephemeral: true });
+        return interaction.reply({
+          content: '❌ That user already has a pending challenge.',
+          flags: MessageFlags.Ephemeral
+        });
       }
 
       const timeoutId = setTimeout(() => {
@@ -88,7 +94,10 @@ module.exports = {
       const challengeData = pendingChallenges.get(opponent.id);
 
       if (!challengeData) {
-        return interaction.reply({ content: '❌ You have no pending challenges.', ephemeral: true });
+        return interaction.reply({
+          content: '❌ You have no pending challenges.',
+          flags: MessageFlags.Ephemeral
+        });
       }
 
       const challenger = await interaction.client.users.fetch(challengeData.challengerId);
@@ -119,17 +128,18 @@ module.exports = {
 
       const resultEmbed = new EmbedBuilder()
         .setTitle('🃏 High Card Duel Result')
-        .setDescription(result)
         .setColor(0x1ABC9C)
+        .setDescription(result)
+        .setImage('attachment://cards.png')
         .addFields(
           {
             name: challengerMember.displayName,
-            value: `![${card1.value}](https://deckofcardsapi.com/static/img/${card1Code}.png)`,
+            value: `[🂠 View Card](https://deckofcardsapi.com/static/img/${card1Code}.png)`,
             inline: true,
           },
           {
             name: opponentMember.displayName,
-            value: `![${card2.value}](https://deckofcardsapi.com/static/img/${card2Code}.png)`,
+            value: `[🂠 View Card](https://deckofcardsapi.com/static/img/${card2Code}.png)`,
             inline: true,
           }
         );
