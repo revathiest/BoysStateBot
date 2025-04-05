@@ -3,113 +3,117 @@ const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js'
 const HEADS_IMG = 'https://www.wholesalecoinsdirect.com/media/catalog/product/p/r/prod-21morganms70-smint-2021-s-morgan-silver-dollar-obverse-650x650.jpg';
 const TAILS_IMG = 'https://www.wholesalecoinsdirect.com/media/catalog/product/p/r/prod-21morganms70-smint-2021-s-morgan-silver-dollar-reverse-650x650.jpg';
 
-let pendingFlips = new Map(); // key: challengedUserId, value: { challengerId, result, timeout }
+let pendingFlips = new Map(); // key: opponentId, value: { challengerId, result, timeout }
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('coinflip')
-    .setDescription('Challenge someone to a coin flip')
-    .addUserOption(option =>
-      option.setName('opponent')
-        .setDescription('The user to challenge')
-        .setRequired(true)
+    .setDescription('Flip a coin to challenge a user')
+    .addSubcommand(sub =>
+      sub.setName('challenge')
+        .setDescription('Challenge a user to a coin flip')
+        .addUserOption(option =>
+          option.setName('opponent')
+            .setDescription('The user to challenge')
+            .setRequired(true)
+        )
     )
-    .addStringOption(option =>
-      option.setName('call')
-        .setDescription('Your call: heads or tails')
-        .setRequired(false)
-        .addChoices(
-          { name: 'Heads', value: 'heads' },
-          { name: 'Tails', value: 'tails' }
+    .addSubcommand(sub =>
+      sub.setName('call')
+        .setDescription('Call heads or tails in a coin flip challenge')
+        .addStringOption(option =>
+          option.setName('choice')
+            .setDescription('Heads or Tails')
+            .setRequired(true)
+            .addChoices(
+              { name: 'Heads', value: 'heads' },
+              { name: 'Tails', value: 'tails' }
+            )
         )
     ),
 
   async execute(interaction) {
-    const challenger = interaction.user;
-    const opponent = interaction.options.getUser('opponent');
-    const call = interaction.options.getString('call');
+    const subcommand = interaction.options.getSubcommand();
 
-    const challengerMember = await interaction.guild.members.fetch(challenger.id);
-    const opponentMember = await interaction.guild.members.fetch(opponent.id);
+    if (subcommand === 'challenge') {
+      const challenger = interaction.user;
+      const opponent = interaction.options.getUser('opponent');
 
-    const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
-    const isSelfChallenge = challenger.id === opponent.id;
-    const isAllowedTester = testerRole && challengerMember.roles.cache.has(testerRole.id);
+      const challengerMember = await interaction.guild.members.fetch(challenger.id);
+      const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
-    if (isSelfChallenge && !isAllowedTester) {
-      return interaction.reply({
-        content: '❌ You can’t flip a coin against yourself, love.',
-        flags: MessageFlags.Ephemeral
+      const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
+      const isSelfChallenge = challenger.id === opponent.id;
+      const isAllowedTester = testerRole && challengerMember.roles.cache.has(testerRole.id);
+
+      if (isSelfChallenge && !isAllowedTester) {
+        return interaction.reply({
+          content: '❌ You can’t challenge yourself unless you’ve got the Bot Tester role, love.',
+          flags: MessageFlags.Ephemeral
+        });
+      }
+
+      if (pendingFlips.has(opponent.id)) {
+        return interaction.reply({
+          content: '❌ That user already has a pending coin flip challenge.',
+          flags: MessageFlags.Ephemeral
+        });
+      }
+
+      const result = Math.random() < 0.5 ? 'heads' : 'tails';
+
+      const timeout = setTimeout(() => {
+        pendingFlips.delete(opponent.id);
+      }, 2 * 60 * 1000); // 2 minutes
+
+      pendingFlips.set(opponent.id, {
+        challengerId: challenger.id,
+        result,
+        timeout,
       });
+
+      return interaction.reply(
+        `🪙 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a coin flip!\n` +
+        `${opponent}, use \`/coinflip call\` to choose **heads** or **tails**.`
+      );
     }
 
-    if (pendingFlips.has(opponent.id)) {
-      return interaction.reply({
-        content: '❌ That user already has a pending coin flip challenge.',
-        flags: MessageFlags.Ephemeral
-      });
-    }
-
-    const result = Math.random() < 0.5 ? 'heads' : 'tails';
-    const image = result === 'heads' ? HEADS_IMG : TAILS_IMG;
-
-    const timeout = setTimeout(() => {
-      pendingFlips.delete(opponent.id);
-    }, 2 * 60 * 1000);
-
-    pendingFlips.set(opponent.id, { challengerId: challenger.id, result, timeout });
-
-    if (call) {
-      // If call is provided immediately
-      const outcome = call.toLowerCase() === result ? `${challengerMember.displayName} wins!` : `${challengerMember.displayName} loses!`;
-      pendingFlips.delete(opponent.id);
-      clearTimeout(timeout);
-
-      const embed = new EmbedBuilder()
-        .setTitle('🪙 Coin Flip Result')
-        .setDescription(`The coin landed on **${result.toUpperCase()}**!\n**${outcome}**`)
-        .setImage(image)
-        .setColor(0xC0C0C0);
-
-      return interaction.reply({ embeds: [embed] });
-    }
-
-    // Otherwise, wait for opponent to call heads/tails
-    await interaction.reply({
-      content: `🪙 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a coin flip!\n` +
-               `${opponent}, reply with \`heads\` or \`tails\` within 2 minutes to make your call!`
-    });
-
-    const filter = msg => msg.author.id === opponent.id && ['heads', 'tails'].includes(msg.content.toLowerCase());
-
-    const collector = interaction.channel.createMessageCollector({ filter, time: 120000 });
-
-    collector.on('collect', async msg => {
-      const choice = msg.content.toLowerCase();
+    if (subcommand === 'call') {
+      const opponent = interaction.user;
+      const choice = interaction.options.getString('choice').toLowerCase();
       const challenge = pendingFlips.get(opponent.id);
 
-      if (!challenge) return;
+      if (!challenge) {
+        return interaction.reply({
+          content: '❌ You have no pending coin flip challenge.',
+          flags: MessageFlags.Ephemeral
+        });
+      }
+
+      const result = challenge.result;
+      const image = result === 'heads' ? HEADS_IMG : TAILS_IMG;
+
+      const challenger = await interaction.client.users.fetch(challenge.challengerId);
+      const challengerMember = await interaction.guild.members.fetch(challenger.id);
+      const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
       clearTimeout(challenge.timeout);
       pendingFlips.delete(opponent.id);
 
-      const outcome = choice === challenge.result ? `${opponentMember.displayName} wins!` : `${opponentMember.displayName} loses!`;
+      const winner =
+        choice === result
+          ? `🎉 **${opponentMember.displayName}** wins the toss!`
+          : `🎉 **${challengerMember.displayName}** wins the toss!`;
 
       const embed = new EmbedBuilder()
         .setTitle('🪙 Coin Flip Result')
-        .setDescription(`The coin landed on **${challenge.result.toUpperCase()}**!\n**${outcome}**`)
-        .setThumbnail(image)
+        .setDescription(
+          `The coin landed on **${result.toUpperCase()}**!\n\n${winner}`
+        )
+        .setImage(image)
         .setColor(0xC0C0C0);
 
-      await interaction.followUp({ embeds: [embed] });
-      collector.stop();
-    });
-
-    collector.on('end', (_, reason) => {
-      if (reason === 'time' && pendingFlips.has(opponent.id)) {
-        pendingFlips.delete(opponent.id);
-        interaction.followUp(`⌛ **${opponentMember.displayName}** didn’t respond in time. The coin flip was cancelled.`);
-      }
-    });
+      await interaction.reply({ embeds: [embed] });
+    }
   }
 };
