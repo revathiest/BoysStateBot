@@ -1,31 +1,29 @@
 const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
-const coinImages = {
-  heads: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/1879CC_Morgan_Dollar_obverse.jpg',
-  tails: 'https://upload.wikimedia.org/wikipedia/commons/f/f6/1879CC_Morgan_Dollar_reverse.jpg',
-};
+const HEADS_IMG = 'https://www.wholesalecoinsdirect.com/media/catalog/product/p/r/prod-21morganms70-smint-2021-s-morgan-silver-dollar-obverse-650x650.jpg';
+const TAILS_IMG = 'https://www.wholesalecoinsdirect.com/media/catalog/product/p/r/prod-21morganms70-smint-2021-s-morgan-silver-dollar-reverse-650x650.jpg';
 
-let pendingFlips = new Map(); // key: opponentId, value: { challengerId, result, timeoutId }
+let pendingFlips = new Map(); // key: opponentId, value: { challengerId, result, timeout }
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('coinflip')
-    .setDescription('Challenge someone to a coin flip')
+    .setDescription('Flip a coin to challenge a user')
     .addSubcommand(sub =>
       sub.setName('challenge')
-        .setDescription('Challenge another user')
+        .setDescription('Challenge a user to a coin flip')
         .addUserOption(option =>
           option.setName('opponent')
-            .setDescription('The person you want to challenge')
+            .setDescription('The user to challenge')
             .setRequired(true)
         )
     )
     .addSubcommand(sub =>
       sub.setName('call')
-        .setDescription('Call the coin flip result')
+        .setDescription('Call heads or tails in a coin flip challenge')
         .addStringOption(option =>
-          option.setName('side')
-            .setDescription('Your call: heads or tails')
+          option.setName('choice')
+            .setDescription('Heads or Tails')
             .setRequired(true)
             .addChoices(
               { name: 'Heads', value: 'heads' },
@@ -40,80 +38,82 @@ module.exports = {
     if (subcommand === 'challenge') {
       const challenger = interaction.user;
       const opponent = interaction.options.getUser('opponent');
+
       const challengerMember = await interaction.guild.members.fetch(challenger.id);
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
-      if (challenger.id === opponent.id) {
-        const testerRole = interaction.guild.roles.cache.find(r => r.name === 'Bot Tester');
-        const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
+      const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
+      const isSelfChallenge = challenger.id === opponent.id;
+      const isAllowedTester = testerRole && challengerMember.roles.cache.has(testerRole.id);
 
-        if (!hasTesterRole) {
-          return interaction.reply({
-            content: '❌ You can’t flip a coin against yourself, love.',
-            flags: MessageFlags.Ephemeral,
-          });
-        }
+      if (isSelfChallenge && !isAllowedTester) {
+        return interaction.reply({
+          content: '❌ You can’t challenge yourself unless you’ve got the Bot Tester role, love.',
+          flags: MessageFlags.Ephemeral
+        });
       }
 
       if (pendingFlips.has(opponent.id)) {
         return interaction.reply({
-          content: '❌ That person already has a pending coin flip challenge.',
-          flags: MessageFlags.Ephemeral,
+          content: '❌ That user already has a pending coin flip challenge.',
+          flags: MessageFlags.Ephemeral
         });
       }
 
-      // Flip the coin secretly now
       const result = Math.random() < 0.5 ? 'heads' : 'tails';
 
-      const timeoutId = setTimeout(() => {
+      const timeout = setTimeout(() => {
         pendingFlips.delete(opponent.id);
-        interaction.followUp({
-          content: `⌛ **${opponentMember.displayName}** didn't respond in time. The challenge from **${challengerMember.displayName}** expired.`
-        }).catch(() => {});
       }, 2 * 60 * 1000); // 2 minutes
 
-      pendingFlips.set(opponent.id, { challengerId: challenger.id, result, timeoutId });
+      pendingFlips.set(opponent.id, {
+        challengerId: challenger.id,
+        result,
+        timeout,
+      });
 
       return interaction.reply(
-        `🪙 **${challengerMember.displayName}** flipped a coin and challenged **${opponentMember.displayName}**!\n` +
-        `${opponent}, use \`/coinflip call\` to choose heads or tails within 2 minutes!`
+        `🪙 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a coin flip!\n` +
+        `${opponent}, use \`/coinflip call\` to choose **heads** or **tails**.`
       );
     }
 
     if (subcommand === 'call') {
       const opponent = interaction.user;
-      const call = interaction.options.getString('side');
-      const challengeData = pendingFlips.get(opponent.id);
+      const choice = interaction.options.getString('choice').toLowerCase();
+      const challenge = pendingFlips.get(opponent.id);
 
-      if (!challengeData) {
+      if (!challenge) {
         return interaction.reply({
-          content: '❌ You have no pending coin flip challenges.',
+          content: '❌ You have no pending coin flip challenge.',
           flags: MessageFlags.Ephemeral
         });
       }
 
-      const { challengerId, result, timeoutId } = challengeData;
-      const challenger = await interaction.client.users.fetch(challengerId);
+      const result = challenge.result;
+      const image = result === 'heads' ? HEADS_IMG : TAILS_IMG;
+
+      const challenger = await interaction.client.users.fetch(challenge.challengerId);
       const challengerMember = await interaction.guild.members.fetch(challenger.id);
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
-      clearTimeout(timeoutId);
+      clearTimeout(challenge.timeout);
       pendingFlips.delete(opponent.id);
 
-      const correct = call === result;
-      const coinImage = coinImages[result];
-
-      const resultText = correct
-        ? `🏆 **${opponentMember.displayName}** called **${call}** and was **right**!`
-        : `😬 **${opponentMember.displayName}** called **${call}** but the coin landed on **${result}**.`;
+      const winner =
+        choice === result
+          ? `🎉 **${opponentMember.displayName}** wins the toss!`
+          : `🎉 **${challengerMember.displayName}** wins the toss!`;
 
       const embed = new EmbedBuilder()
         .setTitle('🪙 Coin Flip Result')
-        .setDescription(resultText)
-        .setThumbnail(coinImage)
-        .setFooter({ text: `Flipped by ${challengerMember.displayName}` });
+        .setDescription(
+          `The coin landed on **${result.toUpperCase()}**!\n\n${winner}`
+        )
+        .setThumbnail(image)
+        .setColor(0xC0C0C0);
 
-      return interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed] });
     }
   }
 };
