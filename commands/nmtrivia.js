@@ -45,6 +45,8 @@ module.exports = {
     m.author.id === interaction.user.id &&
     choiceLetters.map(letter => letter.toLowerCase()).includes(m.content.toLowerCase());
 
+    const correctIndex = shuffledChoices.indexOf(q.answer);
+    const correctLetter = choiceLetters[correctIndex];
 
     try {
       const collected = await interaction.channel.awaitMessages({
