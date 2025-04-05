@@ -2,13 +2,8 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const {
-  Client,
-  Collection,
-  GatewayIntentBits,
-  REST,
-  Routes,
-} = require('discord.js');
+const {  Client, Collection, GatewayIntentBits, REST, Routes,} = require('discord.js');
+const importTriviaFromJSON = require('./utils/importTrivia');
 
 // Load token from .env
 if (!process.env.DISCORD_TOKEN) {
@@ -59,6 +54,10 @@ for (const file of commandFiles) {
 
 client.once('ready', async () => {
   console.log(`🎉 Bot logged in as ${client.user.tag}`);
+
+  // Inside your async startup block
+  await sequelize.sync();
+  await importTriviaFromJSON();
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
   const guildId = process.env.GUILD_ID;
