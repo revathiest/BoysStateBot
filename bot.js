@@ -10,64 +10,90 @@ const {
   Routes,
 } = require('discord.js');
 
-// Create the client with all the juicy intents
+// Load token from .env
+if (!process.env.DISCORD_TOKEN) {
+  console.error('❌ No DISCORD_TOKEN found in .env!');
+  process.exit(1);
+}
+
+// Initialise client with full intents
+console.log('🛠️ Initialising bot with intents...');
 const client = new Client({
   intents: [
-    GatewayIntentBits.Guilds,                  // Required for slash commands & guild data
-    GatewayIntentBits.GuildMessages,           // To read messages sent in text channels
-    GatewayIntentBits.MessageContent,          // To read the actual content of messages (like "!ping")
-    GatewayIntentBits.GuildMembers,            // To track member joins, roles, and user info
-    GatewayIntentBits.GuildMessageReactions,   // If you want to react to or track reactions
-    GatewayIntentBits.GuildPresences,          // If you care who's online or playing what
-    GatewayIntentBits.DirectMessages,          // For responding in DMs
-    GatewayIntentBits.GuildMessageTyping,      // (Optional) to track who's typing in channels
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessageTyping,
   ],
 });
 
 client.commands = new Collection();
-
-// Load slash commands
 const commands = [];
+
+console.log('📁 Loading command files...');
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.data.name, command);
-  commands.push(command.data.toJSON());
+  try {
+    const command = require(`./commands/${file}`);
+    if (!command.data || !command.execute) {
+      console.warn(`⚠️ Skipped ${file}: Missing "data" or "execute"`);
+      continue;
+    }
+    client.commands.set(command.data.name, command);
+    commands.push(command.data.toJSON());
+    console.log(`✅ Loaded command: ${command.data.name}`);
+  } catch (error) {
+    console.error(`❌ Error loading ${file}:`, error);
+  }
 }
 
-// Register slash commands
 client.once('ready', async () => {
-  console.log(`✅ Logged in as ${client.user.tag}`);
+  console.log(`🎉 Bot logged in as ${client.user.tag}`);
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
   try {
-    console.log('🔄 Registering slash commands...');
+    console.log('🌐 Registering slash commands with Discord API...');
     await rest.put(
       Routes.applicationCommands(client.user.id),
       { body: commands }
     );
-    console.log('✅ Slash commands registered!');
+    console.log('✅ Slash commands registered successfully!');
   } catch (error) {
-    console.error('❌ Error registering slash commands:', error);
+    console.error('❌ Failed to register slash commands:', error);
   }
 });
 
-// Handle slash commands
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
-  const command = client.commands.get(interaction.commandName);
+  console.log(`🔔 Received command: /${interaction.commandName} from ${interaction.user.tag}`);
 
-  if (!command) return;
+  const command = client.commands.get(interaction.commandName);
+  if (!command) {
+    console.warn(`⚠️ No matching command found for /${interaction.commandName}`);
+    return;
+  }
 
   try {
     await command.execute(interaction);
+    console.log(`✅ Executed /${interaction.commandName} successfully`);
   } catch (error) {
-    console.error(error);
-    await interaction.reply({ content: '❌ There was an error executing that command.', ephemeral: true });
+    console.error(`❌ Error executing /${interaction.commandName}:`, error);
+    if (!interaction.replied) {
+      await interaction.reply({ content: '❌ There was an error executing that command.', ephemeral: true });
+    }
   }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN)
+  .then(() => console.log('🚀 Bot login successful'))
+  .catch(err => {
+    console.error('❌ Bot login failed:', err);
+    process.exit(1);
+  });
