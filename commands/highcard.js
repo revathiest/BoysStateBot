@@ -1,10 +1,10 @@
 const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
+const suits = ['♠ Spades', '♥ Hearts', '♦ Diamonds', '♣ Clubs'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
-const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs'];
-const suitCodes = { Spades: 'S', Hearts: 'H', Diamonds: 'D', Clubs: 'C' };
+const cardImageBase = 'https://deckofcardsapi.com/static/img';
 
-let pendingChallenges = new Map();
+let pendingChallenges = new Map(); // key: opponentId, value: { challengerId, timeoutId }
 
 function getDeck() {
   const deck = [];
@@ -16,13 +16,18 @@ function getDeck() {
   return deck;
 }
 
-function getCardCode(card) {
-  const valueCode = card.value === '10' ? '0' : card.value[0].toUpperCase();
-  return `${valueCode}${suitCodes[card.suit]}`;
+function cardToString(card) {
+  return `${card.value} of ${card.suit}`;
 }
 
 function getCardValue(card) {
   return values.indexOf(card.value);
+}
+
+function getCardImageURL(card) {
+  const valueCode = card.value === '10' ? '0' : card.value[0].toUpperCase();
+  const suitCode = card.suit[0].toUpperCase();
+  return `${cardImageBase}/${valueCode}${suitCode}.png`;
 }
 
 module.exports = {
@@ -45,6 +50,7 @@ module.exports = {
 
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
+    console.log(`🔔 /highcard ${subcommand} called by ${interaction.user.tag}`);
 
     if (subcommand === 'challenge') {
       const challenger = interaction.user;
@@ -52,10 +58,12 @@ module.exports = {
       const challengerMember = await interaction.guild.members.fetch(challenger.id);
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
-      if (challenger.id === opponent.id) {
-        const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
-        const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
+      console.log(`🤝 Challenger: ${challengerMember.displayName}, Opponent: ${opponentMember.displayName}`);
 
+      if (challenger.id === opponent.id) {
+        const testerRole = interaction.guild.roles.cache.find(r => r.name === 'Bot Tester');
+        const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
+        console.log(`🧪 Self-challenge attempt. Tester role? ${hasTesterRole}`);
         if (!hasTesterRole) {
           return interaction.reply({
             content: '❌ You can’t challenge yourself, mate.',
@@ -65,6 +73,7 @@ module.exports = {
       }
 
       if (pendingChallenges.has(opponent.id)) {
+        console.log(`⚠️ Opponent already has a pending challenge.`);
         return interaction.reply({
           content: '❌ That user already has a pending challenge.',
           flags: MessageFlags.Ephemeral
@@ -73,17 +82,17 @@ module.exports = {
 
       const timeoutId = setTimeout(() => {
         pendingChallenges.delete(opponent.id);
-        interaction.followUp({
-          content: `⌛ Challenge from **${challengerMember.displayName}** to **${opponentMember.displayName}** timed out.`
-        }).catch(() => {});
-      }, 2 * 60 * 1000);
+        console.log(`⌛ Challenge to ${opponentMember.displayName} timed out.`);
+      }, 2 * 60 * 1000); // 2 minutes
 
       pendingChallenges.set(opponent.id, { challengerId: challenger.id, timeoutId });
 
-      return interaction.reply({
-        content: `🎴 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a high-card duel!\n` +
-                 `${opponent}, type \`/highcard accept\` within 2 minutes to draw your card!`
-      });
+      console.log(`🎴 Challenge set. Awaiting response from ${opponentMember.displayName}`);
+
+      return interaction.reply(
+        `🎴 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a high-card duel!\n` +
+        `${opponent}, type \`/highcard accept\` within 2 minutes to draw your card!`
+      );
     }
 
     if (subcommand === 'accept') {
@@ -91,6 +100,7 @@ module.exports = {
       const challengeData = pendingChallenges.get(opponent.id);
 
       if (!challengeData) {
+        console.log(`❌ No challenge found for ${opponent.tag}`);
         return interaction.reply({
           content: '❌ You have no pending challenges.',
           flags: MessageFlags.Ephemeral
@@ -108,38 +118,35 @@ module.exports = {
       const card1 = deck.splice(Math.floor(Math.random() * deck.length), 1)[0];
       const card2 = deck[Math.floor(Math.random() * deck.length)];
 
-      const card1Code = getCardCode(card1);
-      const card2Code = getCardCode(card2);
-
-      const card1Url = `https://deckofcardsapi.com/static/img/${card1Code}.png`;
-      const card2Url = `https://deckofcardsapi.com/static/img/${card2Code}.png`;
+      console.log(`🃏 ${challengerMember.displayName} drew: ${cardToString(card1)}`);
+      console.log(`🃏 ${opponentMember.displayName} drew: ${cardToString(card2)}`);
 
       const value1 = getCardValue(card1);
       const value2 = getCardValue(card2);
 
-      let resultText = '';
+      let result;
       if (value1 > value2) {
-        resultText = `🏆 **${challengerMember.displayName}** wins with the **${card1.value} of ${card1.suit}**!`;
+        result = `🏆 **${challengerMember.displayName}** wins with the ${cardToString(card1)}!`;
       } else if (value2 > value1) {
-        resultText = `🏆 **${opponentMember.displayName}** wins with the **${card2.value} of ${card2.suit}**!`;
+        result = `🏆 **${opponentMember.displayName}** wins with the ${cardToString(card2)}!`;
       } else {
-        resultText = `🤯 It's a tie! You both drew **${card1.value} of ${card1.suit}**. That's mad!`;
+        result = `🤯 It's a tie! You both drew ${cardToString(card1)}.`;
       }
 
-      const embed1 = new EmbedBuilder()
-        .setTitle(`${challengerMember.displayName}'s Card`)
-        .setThumbnail(card1Url)
-        .setDescription(`**${card1.value} of ${card1.suit}**`);
+      const embed = new EmbedBuilder()
+        .setTitle('🎴 High Card Duel Result')
+        .addFields(
+          { name: challengerMember.displayName, value: `**${cardToString(card1)}**`, inline: true },
+          { name: opponentMember.displayName, value: `**${cardToString(card2)}**`, inline: true }
+        )
+        .setImage(getCardImageURL(card1)) // Shows challenger’s card
+        .setThumbnail(getCardImageURL(card2)) // Shows opponent’s card
+        .setColor(0x9b59b6)
+        .setFooter({ text: result });
 
-      const embed2 = new EmbedBuilder()
-        .setTitle(`${opponentMember.displayName}'s Card`)
-        .setThumbnail(card2Url)
-        .setDescription(`**${card2.value} of ${card2.suit}**`);
+      console.log(`✅ Duel complete. ${result}`);
 
-      await interaction.reply({
-        content: `🃏 **High Card Duel Result**\n\n${resultText}`,
-        embeds: [embed1, embed2]
-      });
+      return interaction.reply({ embeds: [embed] });
     }
   }
 };
