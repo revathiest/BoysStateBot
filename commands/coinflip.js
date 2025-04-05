@@ -98,7 +98,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle('🪙 Coin Flip Result')
         .setDescription(`The coin landed on **${challenge.result.toUpperCase()}**!\n**${outcome}**`)
-        .setImage(image)
+        .setThumbnail(image)
         .setColor(0xC0C0C0);
 
       await interaction.followUp({ embeds: [embed] });
