@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs'];
 const suitCodes = { Spades: 'S', Hearts: 'H', Diamonds: 'D', Clubs: 'C' };
 
-let pendingChallenges = new Map(); // key: opponentId, value: { challengerId, timeoutId }
+let pendingChallenges = new Map();
 
 function getDeck() {
   const deck = [];
@@ -52,12 +52,9 @@ module.exports = {
       const challengerMember = await interaction.guild.members.fetch(challenger.id);
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
-      // Self-challenge protection with "Bot Tester" override
       if (challenger.id === opponent.id) {
         const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
         const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
-
-        console.log(`[HighCard] Self-challenge attempted. Tester role found: ${!!testerRole}, Has role: ${hasTesterRole}`);
 
         if (!hasTesterRole) {
           return interaction.reply({
@@ -79,7 +76,7 @@ module.exports = {
         interaction.followUp({
           content: `⌛ Challenge from **${challengerMember.displayName}** to **${opponentMember.displayName}** timed out.`
         }).catch(() => {});
-      }, 2 * 60 * 1000); // 2 minutes
+      }, 2 * 60 * 1000);
 
       pendingChallenges.set(opponent.id, { challengerId: challenger.id, timeoutId });
 
@@ -126,17 +123,22 @@ module.exports = {
       } else if (value2 > value1) {
         resultText = `🏆 **${opponentMember.displayName}** wins with the **${card2.value} of ${card2.suit}**!`;
       } else {
-        resultText = `🤯 It's a tie! You both drew **${card1.value} of ${card1.suit}**. Madness.`;
+        resultText = `🤯 It's a tie! You both drew **${card1.value} of ${card1.suit}**. That's mad!`;
       }
 
-      const messageText = `🃏 **High Card Duel Result**\n\n` +
-        `**${challengerMember.displayName}** drew the **${card1.value} of ${card1.suit}**\n` +
-        `**${opponentMember.displayName}** drew the **${card2.value} of ${card2.suit}**\n\n` +
-        resultText;
+      const embed1 = new EmbedBuilder()
+        .setTitle(`${challengerMember.displayName}'s Card`)
+        .setThumbnail(card1Url)
+        .setDescription(`**${card1.value} of ${card1.suit}**`);
+
+      const embed2 = new EmbedBuilder()
+        .setTitle(`${opponentMember.displayName}'s Card`)
+        .setThumbnail(card2Url)
+        .setDescription(`**${card2.value} of ${card2.suit}**`);
 
       await interaction.reply({
-        content: messageText,
-        files: [card1Url, card2Url]
+        content: `🃏 **High Card Duel Result**\n\n${resultText}`,
+        embeds: [embed1, embed2]
       });
     }
   }
