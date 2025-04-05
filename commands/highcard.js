@@ -47,6 +47,8 @@ module.exports = {
     if (subcommand === 'challenge') {
       const challenger = interaction.user;
       const opponent = interaction.options.getUser('opponent');
+      console.log(challenger);
+      console.log(opponent);
 
       if (challenger.id === opponent.id) {
         return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
