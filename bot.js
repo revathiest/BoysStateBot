@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const {  Client, Collection, GatewayIntentBits, REST, Routes,} = require('discord.js');
 const importTriviaFromJSON = require('./utils/importTrivia');
+const sequelize = require('./db');
 
 // Load token from .env
 if (!process.env.DISCORD_TOKEN) {
