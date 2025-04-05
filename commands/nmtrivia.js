@@ -47,29 +47,32 @@ module.exports = {
 
     const correctIndex = shuffledChoices.indexOf(q.answer);
     const correctLetter = choiceLetters[correctIndex];
-
-    try {
-      const collected = await interaction.channel.awaitMessages({
-        filter,
-        max: 1,
-        time: 30000,
-        errors: ['time']
-      });
-
-      const reply = collected.first().content.toUpperCase();
-
-      const responder = collected.first().author;
-      const member = await interaction.guild.members.fetch(responder.id);
+    let winnerDeclared = false;
+    
+    //Set the amount of time to wait for an answer
+    const collector = interaction.channel.createMessageCollector({
+      filter,
+      time: 30000, //30 seconds
+    });
+    
+    collector.on('collect', async msg => {
+      const reply = msg.content.toUpperCase();
+      const member = await interaction.guild.members.fetch(msg.author.id);
       const displayName = member.displayName;
-      
+    
       if (reply === correctLetter) {
+        winnerDeclared = true;
+        collector.stop('answered'); // stop collection once someone gets it right
+    
         await interaction.followUp(`✅ **${displayName}** got it right! The answer is **${correctLetter}. ${q.answer}**`);
-      } else {
-        await interaction.followUp(`❌ **${displayName}** guessed **${reply}**, but the correct answer was **${correctLetter}. ${q.answer}**`);
       }
-      
-    } catch (err) {
-      await interaction.followUp('⌛ Time’s up! No answer received.');
-    }
+    });
+    
+    collector.on('end', async (_, reason) => {
+      if (!winnerDeclared && reason !== 'answered') {
+        await interaction.followUp(`⌛ Time’s up! Nobody got the correct answer.\nThe answer was **${correctLetter}. ${q.answer}**`);
+      }
+    });
+    
   }
 };
