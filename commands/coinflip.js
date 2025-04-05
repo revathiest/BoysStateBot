@@ -110,7 +110,7 @@ module.exports = {
         .setDescription(
           `The coin landed on **${result.toUpperCase()}**!\n\n${winner}`
         )
-        .setImage(image)
+        .setThumbnail(image)
         .setColor(0xC0C0C0);
 
       await interaction.reply({ embeds: [embed] });
