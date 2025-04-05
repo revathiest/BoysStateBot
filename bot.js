@@ -2,11 +2,16 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const {  Client, Collection, GatewayIntentBits, REST, Routes,} = require('discord.js');
-const importTriviaFromJSON = require('./utils/importTrivia');
-const sequelize = require('./db');
+const {
+  Client,
+  Collection,
+  GatewayIntentBits,
+  REST,
+  Routes,
+  MessageFlags,
+} = require('discord.js');
 
-// Load token from .env
+// Load and validate environment variables
 if (!process.env.DISCORD_TOKEN) {
   console.error('❌ No DISCORD_TOKEN found in .env!');
   process.exit(1);
@@ -17,7 +22,6 @@ if (!process.env.GUILD_ID) {
   process.exit(1);
 }
 
-// Initialise client with full intents
 console.log('🛠️ Initialising bot with intents...');
 const client = new Client({
   intents: [
@@ -56,10 +60,6 @@ for (const file of commandFiles) {
 client.once('ready', async () => {
   console.log(`🎉 Bot logged in as ${client.user.tag}`);
 
-  // Inside your async startup block
-  await sequelize.sync({alter: true});
-  await importTriviaFromJSON();
-
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
   const guildId = process.env.GUILD_ID;
 
@@ -91,10 +91,32 @@ client.on('interactionCreate', async interaction => {
     console.log(`✅ Executed /${interaction.commandName} successfully`);
   } catch (error) {
     console.error(`❌ Error executing /${interaction.commandName}:`, error);
-    if (!interaction.replied) {
-      await interaction.reply({ content: '❌ There was an error executing that command.', ephemeral: true });
+
+    try {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({
+          content: '❌ Something went wrong while running that command.',
+          flags: MessageFlags.Ephemeral
+        });
+      } else {
+        await interaction.reply({
+          content: '❌ Something went wrong while running that command.',
+          flags: MessageFlags.Ephemeral
+        });
+      }
+    } catch (err) {
+      console.warn('⚠️ Failed to send error message to user:', err);
     }
   }
+});
+
+// Global error handling
+process.on('unhandledRejection', reason => {
+  console.error('🛑 Unhandled promise rejection:', reason);
+});
+
+process.on('uncaughtException', err => {
+  console.error('💥 Uncaught exception:', err);
 });
 
 client.login(process.env.DISCORD_TOKEN)
