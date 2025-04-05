@@ -56,7 +56,6 @@ module.exports = {
         const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
         console.log('🔍 Found tester role:', testerRole?.name || 'Not found');
         console.log('🎭 Challenger roles:', challengerMember.roles.cache.map(r => r.name));
-
         const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
         console.log('✅ Has tester role:', hasTesterRole);
 
@@ -80,7 +79,7 @@ module.exports = {
         interaction.followUp({
           content: `⌛ Challenge from **${challengerMember.displayName}** to **${opponentMember.displayName}** timed out.`
         }).catch(() => {});
-      }, 2 * 60 * 1000); // 2 min
+      }, 2 * 60 * 1000);
 
       pendingChallenges.set(opponent.id, { challengerId: challenger.id, timeoutId });
 
@@ -133,22 +132,19 @@ module.exports = {
       const resultEmbed = new EmbedBuilder()
         .setTitle('🃏 High Card Duel Result')
         .setColor(0x1ABC9C)
-        .setDescription(result)
-        .setImage('attachment://cards.png')
-        .addFields(
-          {
-            name: challengerMember.displayName,
-            value: `[🂠 View Card](https://deckofcardsapi.com/static/img/${card1Code}.png)`,
-            inline: true,
-          },
-          {
-            name: opponentMember.displayName,
-            value: `[🂠 View Card](https://deckofcardsapi.com/static/img/${card2Code}.png)`,
-            inline: true,
-          }
-        );
+        .setDescription(result);
 
-      await interaction.reply({ embeds: [resultEmbed] });
+      const challengerCardEmbed = new EmbedBuilder()
+        .setColor(0x3498DB)
+        .setTitle(`${challengerMember.displayName}'s Card`)
+        .setImage(`https://deckofcardsapi.com/static/img/${card1Code}.png`);
+
+      const opponentCardEmbed = new EmbedBuilder()
+        .setColor(0xE74C3C)
+        .setTitle(`${opponentMember.displayName}'s Card`)
+        .setImage(`https://deckofcardsapi.com/static/img/${card2Code}.png`);
+
+      await interaction.reply({ embeds: [resultEmbed, challengerCardEmbed, opponentCardEmbed] });
     }
   }
 };
