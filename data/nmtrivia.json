@@ -1,8 +1,497 @@
 [
-    {
-      "question": "How many counties are in New Mexico?",
-      "choices": ["31", "33", "35", "36"],
-      "answer": "33"
-    }
-  ]
-  
+  {
+    "question": "What is the maximum number of days for a regular legislative session in even-numbered years in New Mexico?",
+    "choices": ["30 days", "45 days", "60 days", "90 days"],
+    "answer": "30 days"
+  },
+  {
+    "question": "Which official is responsible for certifying elections in New Mexico?",
+    "choices": ["Governor", "Attorney General", "Secretary of State", "State Auditor"],
+    "answer": "Secretary of State"
+  },
+  {
+    "question": "What type of city government includes both a city manager and an elected council?",
+    "choices": ["Mayor-Council", "Council-Manager", "Commission", "Direct Democracy"],
+    "answer": "Council-Manager"
+  },
+  {
+    "question": "Which state agency prepares New Mexico’s annual budget?",
+    "choices": ["Department of Finance and Administration", "Legislative Council Service", "Office of the State Auditor", "Governor’s Budget Office"],
+    "answer": "Department of Finance and Administration"
+  },
+  {
+    "question": "What vote is required in both chambers of the New Mexico Legislature to override a governor’s veto?",
+    "choices": ["Simple majority", "Two-thirds", "Three-fourths", "Unanimous"],
+    "answer": "Two-thirds"
+  },
+  {
+    "question": "Which level of government typically issues building permits in New Mexico?",
+    "choices": ["Federal", "State", "County or City", "Tribal"],
+    "answer": "County or City"
+  },
+  {
+    "question": "How are judges selected for the New Mexico Supreme Court?",
+    "choices": ["Direct election", "Appointment by governor with retention election", "Legislative vote", "Judicial council"],
+    "answer": "Appointment by governor with retention election"
+  },
+  {
+    "question": "Which New Mexico legislative committee handles budget and spending recommendations?",
+    "choices": ["Judiciary Committee", "Rules Committee", "Legislative Finance Committee", "Public Affairs Committee"],
+    "answer": "Legislative Finance Committee"
+  },
+  {
+    "question": "What legal authority allows New Mexico counties to adopt ordinances?",
+    "choices": ["The U.S. Constitution", "State Constitution’s Home Rule provision", "County Charters", "Legislative Rulemaking"],
+    "answer": "State Constitution’s Home Rule provision"
+  },
+  {
+    "question": "How many justices serve on the New Mexico Supreme Court?",
+    "choices": ["3", "5", "7", "9"],
+    "answer": "5"
+  },
+  {
+    "question": "What is the role of the New Mexico State Treasurer?",
+    "choices": ["Oversees state investments and cash management", "Interprets tax law", "Audits state agencies", "Administers elections"],
+    "answer": "Oversees state investments and cash management"
+  },
+  {
+    "question": "In New Mexico, what kind of resolution must the legislature pass to propose a constitutional amendment?",
+    "choices": ["Simple Resolution", "Concurrent Resolution", "Joint Resolution", "Executive Order"],
+    "answer": "Joint Resolution"
+  },
+  {
+    "question": "Which official represents the state in legal matters and provides legal advice to state agencies?",
+    "choices": ["Public Defender", "Secretary of State", "State Attorney General", "Chief Justice"],
+    "answer": "State Attorney General"
+  },
+  {
+    "question": "What is the minimum population required for a New Mexico municipality to be classified as a city?",
+    "choices": ["1,000", "3,000", "5,000", "10,000"],
+    "answer": "3,000"
+  },
+  {
+    "question": "Which form of municipal government typically includes an appointed city manager and an elected council?",
+    "choices": ["Mayor-Council", "Council-Manager", "Commission", "Hybrid"],
+    "answer": "Council-Manager"
+  },
+  {
+    "question": "Who sets property tax rates within a New Mexico county?",
+    "choices": ["County Treasurer", "County Manager", "County Commission", "State Taxation and Revenue Department"],
+    "answer": "County Commission"
+  },
+  {
+    "question": "What is the role of a county assessor in New Mexico?",
+    "choices": ["Manages county spending", "Issues building permits", "Appraises property for taxation", "Oversees elections"],
+    "answer": "Appraises property for taxation"
+  },
+  {
+    "question": "How many branches of government does New Mexico’s state constitution establish?",
+    "choices": ["One", "Two", "Three", "Four"],
+    "answer": "Three"
+  },
+  {
+    "question": "What type of vote is required to pass most ordinances in a New Mexico city council?",
+    "choices": ["Majority vote", "Two-thirds", "Unanimous", "Plurality"],
+    "answer": "Majority vote"
+  },
+  {
+    "question": "Which local official typically supervises county elections in New Mexico?",
+    "choices": ["County Clerk", "County Manager", "County Commissioner", "Sheriff"],
+    "answer": "County Clerk"
+  },
+  {
+    "question": "What is the name for a local law passed by a city or county in New Mexico?",
+    "choices": ["Statute", "Resolution", "Ordinance", "Bill"],
+    "answer": "Ordinance"
+  },
+  {
+    "question": "In a New Mexico county, who has the power to adopt a budget?",
+    "choices": ["County Treasurer", "County Commission", "State Auditor", "County Clerk"],
+    "answer": "County Commission"
+  },
+  {
+    "question": "Which document outlines the powers and organization of New Mexico’s municipal governments?",
+    "choices": ["City Charter", "New Mexico Constitution", "Federal Mandate", "Civil Code"],
+    "answer": "City Charter"
+  },
+  {
+    "question": "Which level of government in New Mexico handles zoning and land use regulations?",
+    "choices": ["Federal", "State", "County or City", "Special District"],
+    "answer": "County or City"
+  },
+  {
+    "question": "What term describes a municipality with its own charter approved by voters?",
+    "choices": ["Statutory City", "Consolidated Municipality", "Home Rule City", "Hybrid Municipality"],
+    "answer": "Home Rule City"
+  },
+  {
+    "question": "What does a New Mexico municipal judge primarily handle?",
+    "choices": ["Felony cases", "Traffic and ordinance violations", "Civil lawsuits over $10,000", "Probate cases"],
+    "answer": "Traffic and ordinance violations"
+  },
+  {
+    "question": "What distinguishes a 'general law' municipality from a 'home rule' municipality in New Mexico?",
+    "choices": [
+      "General law cities require governor approval for laws",
+      "General law cities follow state law structure; home rule cities can create their own",
+      "Home rule cities are exempt from taxes",
+      "General law cities do not have elections"
+    ],
+    "answer": "General law cities follow state law structure; home rule cities can create their own"
+  },
+  {
+    "question": "Which type of local government entity in New Mexico is created to provide a specific service, like flood control or fire protection?",
+    "choices": ["Municipality", "County", "Special District", "Commission"],
+    "answer": "Special District"
+  },
+  {
+    "question": "What is the primary governing body of a New Mexico public school district?",
+    "choices": ["County Commission", "Board of Education", "State Education Cabinet", "Superintendent"],
+    "answer": "Board of Education"
+  },
+  {
+    "question": "Who is responsible for preparing the Executive Budget in New Mexico?",
+    "choices": ["State Treasurer", "State Auditor", "Governor", "Legislative Finance Committee"],
+    "answer": "Governor"
+  },
+  {
+    "question": "What is the role of the Legislative Council Service in New Mexico?",
+    "choices": ["Audits executive agencies", "Maintains public safety", "Provides legal and administrative support to legislators", "Conducts elections"],
+    "answer": "Provides legal and administrative support to legislators"
+  },
+  {
+    "question": "Which committee in the New Mexico House of Representatives typically handles bills with a financial impact?",
+    "choices": ["Judiciary", "Rules", "Appropriations and Finance", "Public Safety"],
+    "answer": "Appropriations and Finance"
+  },
+  {
+    "question": "How can a constitutional amendment be placed on the ballot in New Mexico?",
+    "choices": [
+      "By a 3/4 public petition",
+      "By the Supreme Court",
+      "By joint resolution of the Legislature",
+      "By executive order of the Governor"
+    ],
+    "answer": "By joint resolution of the Legislature"
+  },
+  {
+    "question": "Which official in New Mexico is primarily responsible for investigating fraud and mismanagement of public funds?",
+    "choices": ["State Auditor", "Attorney General", "State Treasurer", "Legislative Council Director"],
+    "answer": "State Auditor"
+  },
+  {
+    "question": "What type of bill must originate in the New Mexico House of Representatives?",
+    "choices": ["Education bills", "Criminal law bills", "Revenue-raising bills", "Veterans affairs bills"],
+    "answer": "Revenue-raising bills"
+  },
+  {
+    "question": "Which of the following is NOT typically considered a function of county government in New Mexico?",
+    "choices": ["Law enforcement", "Public health", "Tax collection", "Issuing federal patents"],
+    "answer": "Issuing federal patents"
+  },
+  {
+    "question": "What is the purpose of a local zoning ordinance in New Mexico?",
+    "choices": [
+      "To allocate state tax revenue",
+      "To set educational standards",
+      "To regulate land use and development",
+      "To elect city council members"
+    ],
+    "answer": "To regulate land use and development"
+  },
+  {
+    "question": "Which state department oversees public education in New Mexico?",
+    "choices": ["State Department of Education", "Public Education Department", "Education Accountability Office", "Governor’s Education Council"],
+    "answer": "Public Education Department"
+  },
+  {
+    "question": "What vote is required in the New Mexico Legislature to pass most bills?",
+    "choices": ["Simple majority", "Two-thirds", "Three-fourths", "Unanimous"],
+    "answer": "Simple majority"
+  },
+  {
+    "question": "In New Mexico, which official has the authority to declare a state of emergency?",
+    "choices": ["Lieutenant Governor", "Attorney General", "Governor", "Secretary of State"],
+    "answer": "Governor"
+  },
+  {
+    "question": "What is the primary role of a sheriff in New Mexico counties?",
+    "choices": ["Oversees tax collection", "Provides law enforcement in unincorporated areas", "Manages school safety", "Supervises judges"],
+    "answer": "Provides law enforcement in unincorporated areas"
+  },
+  {
+    "question": "Who has the authority to call the New Mexico Legislature into a special session?",
+    "choices": ["Lieutenant Governor", "House Speaker", "Governor", "Supreme Court"],
+    "answer": "Governor"
+  },
+  {
+    "question": "Which body confirms appointments made by the Governor of New Mexico?",
+    "choices": ["House of Representatives", "State Supreme Court", "State Senate", "State Ethics Commission"],
+    "answer": "State Senate"
+  },
+  {
+    "question": "In the event of a tie vote in the New Mexico Senate, who casts the deciding vote?",
+    "choices": ["Senate President Pro Tempore", "Lieutenant Governor", "House Speaker", "Governor"],
+    "answer": "Lieutenant Governor"
+  },
+  {
+    "question": "What is the primary law enforcement agency at the state level in New Mexico?",
+    "choices": ["New Mexico Sheriff’s Department", "Department of Corrections", "New Mexico State Police", "State Marshals"],
+    "answer": "New Mexico State Police"
+  },
+  {
+    "question": "How are police chiefs selected in New Mexico municipalities?",
+    "choices": ["Elected by residents", "Appointed by the governor", "Appointed by city council or mayor", "Selected by county sheriff"],
+    "answer": "Appointed by city council or mayor"
+  },
+  {
+    "question": "What role does the New Mexico Supreme Court play in the state’s checks and balances?",
+    "choices": ["Conducts elections", "Oversees budgets", "Interprets laws and reviews constitutionality", "Passes statutes"],
+    "answer": "Interprets laws and reviews constitutionality"
+  },
+  {
+    "question": "Which branch of New Mexico government is responsible for executing and enforcing laws?",
+    "choices": ["Judicial", "Legislative", "Executive", "Regulatory"],
+    "answer": "Executive"
+  },
+  {
+    "question": "If the Governor and Lieutenant Governor are both unable to serve, who is next in the line of succession in New Mexico?",
+    "choices": ["Speaker of the House", "Chief Justice", "Attorney General", "State Treasurer"],
+    "answer": "Speaker of the House"
+  },
+  {
+    "question": "What is a key function of the New Mexico Court of Appeals?",
+    "choices": ["Writes legislation", "Handles federal cases", "Reviews decisions from lower courts", "Oversees local police"],
+    "answer": "Reviews decisions from lower courts"
+  },
+  {
+    "question": "Which law enforcement entity is responsible for patrolling state highways in New Mexico?",
+    "choices": ["Local police", "New Mexico State Police", "County sheriff", "National Guard"],
+    "answer": "New Mexico State Police"
+  },
+  {
+    "question": "In New Mexico, who must sign a bill for it to become law?",
+    "choices": ["Speaker of the House", "Lieutenant Governor", "Governor", "Chief Justice"],
+    "answer": "Governor"
+  },
+  {
+    "question": "What happens if the Governor of New Mexico does not sign or veto a bill within the allotted time?",
+    "choices": ["The bill is returned to the Legislature", "The bill is automatically vetoed", "The bill becomes law", "The Supreme Court decides"],
+    "answer": "The bill becomes law"
+  },
+  {
+    "question": "What is a 'line-item veto' as used by the Governor of New Mexico?",
+    "choices": [
+      "Veto of an entire bill",
+      "Veto of a single sentence",
+      "Veto of specific spending items in an appropriations bill",
+      "Veto of a nomination"
+    ],
+    "answer": "Veto of specific spending items in an appropriations bill"
+  },
+  {
+    "question": "Which legislative committee is responsible for drafting the state's general appropriations bill?",
+    "choices": ["Rules Committee", "Public Affairs Committee", "Appropriations and Finance Committee", "Transportation Committee"],
+    "answer": "Appropriations and Finance Committee"
+  },
+  {
+    "question": "How often must New Mexico pass a balanced budget?",
+    "choices": ["Every 2 years", "Only during economic downturns", "Annually", "Every governor’s term"],
+    "answer": "Annually"
+  },
+  {
+    "question": "What is the primary source of revenue for local governments in New Mexico?",
+    "choices": ["Sales tax", "Property tax", "Income tax", "Oil and gas royalties"],
+    "answer": "Property tax"
+  },
+  {
+    "question": "What is the primary use of general obligation bonds by local governments in New Mexico?",
+    "choices": ["Pay salaries", "Fund military operations", "Finance public infrastructure projects", "Buy private land"],
+    "answer": "Finance public infrastructure projects"
+  },
+  {
+    "question": "Who is responsible for auditing state and local government agencies in New Mexico?",
+    "choices": ["State Auditor", "Legislative Council Service", "State Treasurer", "Chief Justice"],
+    "answer": "State Auditor"
+  },
+  {
+    "question": "What is the purpose of the New Mexico Governmental Conduct Act?",
+    "choices": [
+      "To outline election procedures",
+      "To guide court sentencing",
+      "To establish ethical standards for public officials",
+      "To regulate police behavior"
+    ],
+    "answer": "To establish ethical standards for public officials"
+  },
+  {
+    "question": "Which agency investigates ethics complaints against public officials in New Mexico?",
+    "choices": ["State Police", "Attorney General’s Office", "State Ethics Commission", "Public Regulation Commission"],
+    "answer": "State Ethics Commission"
+  },
+  {
+    "question": "What is a fiscal impact report?",
+    "choices": [
+      "A citizen-written complaint about taxes",
+      "A summary of campaign finance reports",
+      "A document estimating the cost of proposed legislation",
+      "A ruling by the NM Supreme Court"
+    ],
+    "answer": "A document estimating the cost of proposed legislation"
+  },
+  {
+    "question": "When does New Mexico’s fiscal year begin?",
+    "choices": ["January 1", "April 15", "July 1", "October 1"],
+    "answer": "July 1"
+  },
+  {
+    "question": "How many federally recognized tribes and pueblos are located in New Mexico?",
+    "choices": ["9", "12", "19", "23"],
+    "answer": "23"
+  },
+  {
+    "question": "Which state office in New Mexico is tasked with facilitating communication between the state and tribal governments?",
+    "choices": ["Governor’s Office", "Office of Indian Affairs", "Tribal Liaison Board", "State Ethics Commission"],
+    "answer": "Office of Indian Affairs"
+  },
+  {
+    "question": "True or False: Tribal governments in New Mexico have the power to levy taxes on their lands.",
+    "choices": ["True", "False"],
+    "answer": "True"
+  },
+  {
+    "question": "What voting method does New Mexico use to conduct early voting?",
+    "choices": ["Absentee-only", "Universal mail-in", "In-person and absentee", "Mobile voting units"],
+    "answer": "In-person and absentee"
+  },
+  {
+    "question": "Which office oversees campaign finance compliance in New Mexico?",
+    "choices": ["State Auditor", "Secretary of State", "Ethics Commission", "Attorney General"],
+    "answer": "Secretary of State"
+  },
+  {
+    "question": "What is the minimum age to serve in the New Mexico House of Representatives?",
+    "choices": ["18", "21", "25", "30"],
+    "answer": "21"
+  },
+  {
+    "question": "New Mexico is one of only a few states that does not pay legislators a salary. What do they receive instead?",
+    "choices": ["Free housing", "Per diem compensation", "State tax exemption", "Education stipends"],
+    "answer": "Per diem compensation"
+  },
+  {
+    "question": "What type of local government body regulates utilities and insurance in New Mexico?",
+    "choices": ["City Council", "State Ethics Commission", "Public Regulation Commission", "Department of Revenue"],
+    "answer": "Public Regulation Commission"
+  },
+  {
+    "question": "How many members serve on the New Mexico Public Regulation Commission?",
+    "choices": ["3", "5", "7", "9"],
+    "answer": "3"
+  },
+  {
+    "question": "Which statewide elected office handles motor vehicle registration in New Mexico?",
+    "choices": ["Public Safety Secretary", "Transportation Commissioner", "Taxation and Revenue Secretary", "Attorney General"],
+    "answer": "Taxation and Revenue Secretary"
+  },
+  {
+    "question": "What’s the legal process called when a citizen places an issue on the ballot by collecting signatures?",
+    "choices": ["Referendum", "Recall", "Initiative", "Mandamus"],
+    "answer": "Initiative"
+  },
+  {
+    "question": "Which body certifies the results of a statewide election in New Mexico?",
+    "choices": ["County Clerks", "Secretary of State", "State Canvassing Board", "Governor’s Office"],
+    "answer": "State Canvassing Board"
+  },
+  {
+    "question": "Which official presides over city council meetings in a Mayor-Council form of government in New Mexico?",
+    "choices": ["City Clerk", "City Manager", "Mayor", "Council President"],
+    "answer": "Mayor"
+  },
+  {
+    "question": "True or False: New Mexico municipalities may adopt their own charters under home rule.",
+    "choices": ["True", "False"],
+    "answer": "True"
+  },
+  {
+    "question": "What is a quorum in the context of a city council meeting?",
+    "choices": [
+      "The full number of council members",
+      "A citizen petition to hold a vote",
+      "The minimum number of members required to conduct official business",
+      "A two-thirds majority vote"
+    ],
+    "answer": "The minimum number of members required to conduct official business"
+  },
+  {
+    "question": "Which New Mexico department is responsible for administering the state's tax laws?",
+    "choices": ["Public Regulation Commission", "Department of Finance", "Taxation and Revenue Department", "Treasury Department"],
+    "answer": "Taxation and Revenue Department"
+  },
+  {
+    "question": "In a commission-style city government, how are legislative and executive powers distributed?",
+    "choices": [
+      "Separated between council and mayor",
+      "Shared among elected commissioners",
+      "Held solely by the city manager",
+      "Given to the Governor’s office"
+    ],
+    "answer": "Shared among elected commissioners"
+  },
+  {
+    "question": "What is the maximum number of terms a New Mexico Governor can serve?",
+    "choices": ["One", "Two", "Three", "Unlimited"],
+    "answer": "Two"
+  },
+  {
+    "question": "Which of the following is a key difference between city and county government in New Mexico?",
+    "choices": [
+      "Cities handle elections, counties do not",
+      "Counties serve broader unincorporated areas",
+      "Counties cannot levy taxes",
+      "Cities operate under federal oversight"
+    ],
+    "answer": "Counties serve broader unincorporated areas"
+  },
+  {
+    "question": "Who appoints the chief justice of the New Mexico Supreme Court?",
+    "choices": ["Governor", "Public vote", "State Bar Association", "Justices of the Supreme Court"],
+    "answer": "Justices of the Supreme Court"
+  },
+  {
+    "question": "How many votes are needed in each chamber of the New Mexico Legislature to pass a constitutional amendment?",
+    "choices": ["Simple majority", "Three-fourths", "Two-thirds", "Unanimous"],
+    "answer": "Two-thirds"
+  },
+  {
+    "question": "Which New Mexico official is responsible for maintaining state records and issuing corporate licenses?",
+    "choices": ["State Auditor", "Lieutenant Governor", "Secretary of State", "Attorney General"],
+    "answer": "Secretary of State"
+  },
+  {
+    "question": "What entity oversees campaign ethics, lobbying regulations, and conflict-of-interest rules in New Mexico?",
+    "choices": ["State Auditor", "Governor’s Ethics Office", "State Ethics Commission", "Judicial Standards Board"],
+    "answer": "State Ethics Commission"
+  },
+  {
+    "question": "True or False: New Mexico is a 'closed primary' state, meaning only registered party members can vote in primary elections.",
+    "choices": ["True", "False"],
+    "answer": "True"
+  },
+  {
+    "question": "What is the typical term length for a New Mexico city councilor?",
+    "choices": ["2 years", "3 years", "4 years", "6 years"],
+    "answer": "4 years"
+  },
+  {
+    "question": "Which position in a county government is responsible for maintaining public records and issuing marriage licenses?",
+    "choices": ["County Sheriff", "County Treasurer", "County Clerk", "County Manager"],
+    "answer": "County Clerk"
+  },
+  {
+    "question": "Which article of the New Mexico Constitution outlines the structure of the state’s legislative branch?",
+    "choices": ["Article I", "Article II", "Article IV", "Article VI"],
+    "answer": "Article IV"
+  }
+]
