@@ -60,7 +60,7 @@ client.once('ready', async () => {
   try {
     console.log('🌐 Registering slash commands with Discord API...');
     await rest.put(
-      Routes.applicationGuildCommands(client.user.id, 981247212182962186),
+      Routes.applicationGuildCommands(client.user.id, '981247212182962186'),
       { body: commands }
     );
     console.log('✅ Slash commands registered successfully!');
