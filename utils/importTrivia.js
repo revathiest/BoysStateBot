@@ -47,6 +47,15 @@ async function importTriviaFromJSON() {
   }
 
   console.log(`📦 Import complete. Inserted: ${inserted}, Skipped: ${questions.length - inserted}`);
+
+  // Delete the JSON file after import
+try {
+  fs.unlinkSync(filePath);
+  console.log(`🧹 Removed JSON file after successful import: ${filePath}`);
+} catch (err) {
+  console.warn(`⚠️ Could not delete trivia file: ${err.message}`);
+}
+
 }
 
 module.exports = importTriviaFromJSON;
