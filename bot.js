@@ -56,7 +56,7 @@ client.once('ready', async () => {
   console.log(`🎉 Bot logged in as ${client.user.tag}`);
 
   // Inside your async startup block
-  await sequelize.sync();
+  await sequelize.sync({alter: true});
   await importTriviaFromJSON();
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
