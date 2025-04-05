@@ -44,9 +44,45 @@ module.exports = {
       .setDescription(`**${q.question}**\n\n${choiceLines}`)
       .setFooter({ text: `Type your answer (${choiceLetters.join('/')}) below. You’ve got 30 seconds!` });
     
-    await interaction.reply({ embeds: [questionEmbed] });
-    
+      const message = await interaction.reply({ embeds: [questionEmbed], fetchReply: true });
 
+      let secondsLeft = 30;
+      
+      const countdownInterval = setInterval(async () => {
+        if (winnerDeclared) {
+          clearInterval(countdownInterval);
+          return;
+        }
+      
+        secondsLeft -= 5;
+      
+        if (secondsLeft <= 0) {
+          clearInterval(countdownInterval);
+          const expiredEmbed = EmbedBuilder.from(questionEmbed).setFooter({
+            text: `⏰ Time is up!`
+          });
+      
+          try {
+            await message.edit({ embeds: [expiredEmbed] });
+          } catch (err) {
+            console.warn('⚠️ Could not update embed at timeout:', err);
+          }
+      
+          return;
+        }
+      
+        const updatedEmbed = EmbedBuilder.from(questionEmbed).setFooter({
+          text: `Type your answer (${choiceLetters.join('/')}) below. Time remaining: ${secondsLeft}s`
+        });
+      
+        try {
+          await message.edit({ embeds: [updatedEmbed] });
+        } catch (err) {
+          console.warn('⚠️ Failed to update embed timer:', err);
+          clearInterval(countdownInterval);
+        }
+      }, 5000);
+     
     // Adjusted filter:
     const filter = m =>
     m.author.id === interaction.user.id &&
