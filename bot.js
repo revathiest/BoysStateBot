@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const {  Client, Collection, GatewayIntentBits, REST, Routes,} = require('discord.js');
 const importTriviaFromJSON = require('./utils/importTrivia');
+const sequelize = require('./db');
 
 // Load token from .env
 if (!process.env.DISCORD_TOKEN) {
@@ -56,7 +57,7 @@ client.once('ready', async () => {
   console.log(`🎉 Bot logged in as ${client.user.tag}`);
 
   // Inside your async startup block
-  await sequelize.sync();
+  await sequelize.sync({alter: true});
   await importTriviaFromJSON();
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
