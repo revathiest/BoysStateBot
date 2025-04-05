@@ -54,7 +54,11 @@ module.exports = {
 
       if (challenger.id === opponent.id) {
         const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
+        console.log('🔍 Found tester role:', testerRole?.name || 'Not found');
+        console.log('🎭 Challenger roles:', challengerMember.roles.cache.map(r => r.name));
+
         const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
+        console.log('✅ Has tester role:', hasTesterRole);
 
         if (!hasTesterRole) {
           return interaction.reply({
