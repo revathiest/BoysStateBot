@@ -122,8 +122,13 @@ module.exports = {
       } else if (value2 > value1) {
         resultText = `🏆 **${opponentMember.displayName}** wins with the **${card2.value} of ${card2.suit}**!`;
       } else {
-        resultText = `🤯 It's a tie! You both drew **${card1.value} of ${card1.suit}**. That's mad!`;
+        if (card1.suit === card2.suit) {
+          resultText = `🤯 It's a tie! You both drew the **exact same card** — **${card1.value} of ${card1.suit}**. That’s nuts!`;
+        } else {
+          resultText = `🤝 It's a tie! Both drew a **${card1.value}**.`;
+        }
       }
+      
 
       const embed1 = new EmbedBuilder()
         .setTitle(`${challengerMember.displayName}'s Card`)
