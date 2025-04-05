@@ -49,11 +49,22 @@ module.exports = {
     const correctLetter = choiceLetters[correctIndex];
     let winnerDeclared = false;
     
+
+    const totalTime = 30000; // 30s
+    const warningTime = 10000; // last 10s
+
     //Set the amount of time to wait for an answer
     const collector = interaction.channel.createMessageCollector({
       filter,
-      time: 30000, //30 seconds
+      time: totalTime, //30 seconds
     });
+
+setTimeout(() => {
+  if (!winnerDeclared) {
+    interaction.followUp(`⏳ ${warningTime / 1000} seconds left!`);
+  }
+}, totalTime - warningTime);
+
     
     collector.on('collect', async msg => {
       const reply = msg.content.toUpperCase();
