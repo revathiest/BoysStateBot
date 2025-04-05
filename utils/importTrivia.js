@@ -42,7 +42,7 @@ async function importTriviaFromJSON() {
       inserted++;
       console.log(`✅ Inserted [${i + 1}/${questions.length}]: ${q.question}`);
     } else {
-      console.log(`⏭️ Skipped duplicate [${i + 1}/${questions.length}]: "${q.question}"`);
+      //console.log(`⏭️ Skipped duplicate [${i + 1}/${questions.length}]: "${q.question}"`);
     }
   }
 
