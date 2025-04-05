@@ -6,7 +6,7 @@ async function importTriviaFromJSON() {
   const filePath = path.join(__dirname, '../data/nmtrivia.json');
 
   if (!fs.existsSync(filePath)) {
-    console.log('📁 No trivia JSON file found, skipping import.');
+    console.log('📁 No trivia JSON file found at:', filePath);
     return;
   }
 
@@ -14,13 +14,14 @@ async function importTriviaFromJSON() {
   let questions;
   try {
     questions = JSON.parse(data);
+    console.log(`📚 Loaded ${questions.length} questions from JSON`);
   } catch (err) {
-    console.error('❌ Invalid JSON in nmtrivia.json:', err);
+    console.error('❌ Failed to parse JSON:', err);
     return;
   }
 
   let inserted = 0;
-  for (const q of questions) {
+  for (const [i, q] of questions.entries()) {
     const exists = await TriviaQuestion.findOne({
       where: {
         question: q.question,
@@ -39,14 +40,13 @@ async function importTriviaFromJSON() {
         choice_d: d,
       });
       inserted++;
+      console.log(`✅ Inserted [${i + 1}/${questions.length}]: ${q.question}`);
+    } else {
+      console.log(`⏭️ Skipped duplicate [${i + 1}/${questions.length}]: "${q.question}"`);
     }
   }
 
-  if (inserted > 0) {
-    console.log(`✅ Imported ${inserted} new trivia questions.`);
-  } else {
-    console.log('🟡 Trivia questions already in database. Nothing new to import.');
-  }
+  console.log(`📦 Import complete. Inserted: ${inserted}, Skipped: ${questions.length - inserted}`);
 }
 
 module.exports = importTriviaFromJSON;
