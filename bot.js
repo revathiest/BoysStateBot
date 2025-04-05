@@ -16,6 +16,11 @@ if (!process.env.DISCORD_TOKEN) {
   process.exit(1);
 }
 
+if (!process.env.GUILD_ID) {
+  console.error('❌ No GUILD_ID found in .env!');
+  process.exit(1);
+}
+
 // Initialise client with full intents
 console.log('🛠️ Initialising bot with intents...');
 const client = new Client({
@@ -56,11 +61,12 @@ client.once('ready', async () => {
   console.log(`🎉 Bot logged in as ${client.user.tag}`);
 
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+  const guildId = process.env.GUILD_ID;
 
   try {
     console.log('🌐 Registering slash commands with Discord API...');
     await rest.put(
-      Routes.applicationGuildCommands(client.user.id, '981247212182962186'),
+      Routes.applicationGuildCommands(client.user.id, guildId),
       { body: commands }
     );
     console.log('✅ Slash commands registered successfully!');
