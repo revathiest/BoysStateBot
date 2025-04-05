@@ -36,9 +36,16 @@ module.exports = {
     const choiceLines = shuffledChoices.map((c, i) => `**${choiceLetters[i]}.** ${c}`).join('\n');
 
     // In reply:
-    await interaction.reply({
-    content: `🧠 **New Mexico Trivia!**\n\n${q.question}\n\n${choiceLines}\n\nType your answer (${choiceLetters.join('/')}) below.`
-    });
+    const { EmbedBuilder } = require('discord.js');
+
+    const questionEmbed = new EmbedBuilder()
+      .setColor(0x3498DB) // Nice blue tone
+      .setTitle('🧠 New Mexico Trivia')
+      .setDescription(`**${q.question}**\n\n${choiceLines}`)
+      .setFooter({ text: `Type your answer (${choiceLetters.join('/')}) below. You’ve got 30 seconds!` });
+    
+    await interaction.reply({ embeds: [questionEmbed] });
+    
 
     // Adjusted filter:
     const filter = m =>
