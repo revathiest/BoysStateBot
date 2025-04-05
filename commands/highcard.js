@@ -52,9 +52,12 @@ module.exports = {
       const challengerMember = await interaction.guild.members.fetch(challenger.id);
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
+      console.log(`🧠 Challenge initiated by ${challengerMember.displayName} targeting ${opponentMember.displayName}`);
+
       if (challenger.id === opponent.id) {
         const testerRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
         const hasTesterRole = testerRole && challengerMember.roles.cache.has(testerRole.id);
+        console.log(`⚠️ Self-challenge detected. Tester role present: ${!!hasTesterRole}`);
 
         if (!hasTesterRole) {
           return interaction.reply({
@@ -65,6 +68,7 @@ module.exports = {
       }
 
       if (pendingChallenges.has(opponent.id)) {
+        console.log(`❌ ${opponentMember.displayName} already has a pending challenge.`);
         return interaction.reply({
           content: '❌ That user already has a pending challenge.',
           flags: MessageFlags.Ephemeral
@@ -80,6 +84,8 @@ module.exports = {
 
       pendingChallenges.set(opponent.id, { challengerId: challenger.id, timeoutId });
 
+      console.log(`✅ Challenge stored for ${opponentMember.displayName}`);
+
       return interaction.reply({
         content: `🎴 **${challengerMember.displayName}** has challenged **${opponentMember.displayName}** to a high-card duel!\n` +
                  `${opponent}, type \`/highcard accept\` within 2 minutes to draw your card!`
@@ -91,6 +97,7 @@ module.exports = {
       const challengeData = pendingChallenges.get(opponent.id);
 
       if (!challengeData) {
+        console.log(`❌ ${opponent.username} attempted to accept a nonexistent challenge`);
         return interaction.reply({
           content: '❌ You have no pending challenges.',
           flags: MessageFlags.Ephemeral
@@ -117,6 +124,9 @@ module.exports = {
       const value1 = getCardValue(card1);
       const value2 = getCardValue(card2);
 
+      console.log(`🎴 ${challengerMember.displayName} drew ${card1.value} of ${card1.suit}`);
+      console.log(`🎴 ${opponentMember.displayName} drew ${card2.value} of ${card2.suit}`);
+
       let resultText = '';
       if (value1 > value2) {
         resultText = `🏆 **${challengerMember.displayName}** wins with the **${card1.value} of ${card1.suit}**!`;
@@ -135,6 +145,8 @@ module.exports = {
         .setTitle(`${opponentMember.displayName}'s Card`)
         .setThumbnail(card2Url)
         .setDescription(`**${card2.value} of ${card2.suit}**`);
+
+      console.log(`📣 Result: ${resultText}`);
 
       await interaction.reply({
         content: `🃏 **High Card Duel Result**\n\n${resultText}`,
