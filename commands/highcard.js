@@ -53,8 +53,12 @@ module.exports = {
       const opponentMember = await interaction.guild.members.fetch(opponent.id);
 
       if (challenger.id === opponent.id) {
-        return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
+        const allowedRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
+        if (!allowedRole || !challengerMember.roles.cache.has(allowedRole.id)) {
+          return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
+        }
       }
+      
 
       if (pendingChallenges.has(opponent.id)) {
         return interaction.reply({ content: '❌ That user already has a pending challenge.', ephemeral: true });
