@@ -52,11 +52,16 @@ module.exports = {
 
       const reply = collected.first().content.toUpperCase();
 
+      const responder = collected.first().author;
+      const member = await interaction.guild.members.fetch(responder.id);
+      const displayName = member.displayName;
+      
       if (reply === correctLetter) {
-        await interaction.followUp(`✅ Correct! The answer is **${correctLetter}. ${q.answer}**`);
+        await interaction.followUp(`✅ **${displayName}** got it right! The answer is **${correctLetter}. ${q.answer}**`);
       } else {
-        await interaction.followUp(`❌ Nope! You said **${reply}**, but the correct answer was **${correctLetter}. ${q.answer}**`);
+        await interaction.followUp(`❌ **${displayName}** guessed **${reply}**, but the correct answer was **${correctLetter}. ${q.answer}**`);
       }
+      
     } catch (err) {
       await interaction.followUp('⌛ Time’s up! No answer received.');
     }
