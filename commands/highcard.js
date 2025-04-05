@@ -54,6 +54,7 @@ module.exports = {
 
       if (challenger.id === opponent.id) {
         const allowedRole = interaction.guild.roles.cache.find(role => role.name === 'Bot Tester');
+        console.log(allowedRole);
         if (!allowedRole || !challengerMember.roles.cache.has(allowedRole.id)) {
           return interaction.reply({ content: '❌ You can’t challenge yourself, mate.', ephemeral: true });
         }
