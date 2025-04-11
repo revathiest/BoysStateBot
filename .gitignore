@@ -1,2 +1,13 @@
+# Environment and secrets
 .env
-/node_modules
+config.json
+
+# System/tool-specific files
+.vscode/launch.json
+
+# Dependency and build artifacts
+node_modules/
+*.zip
+bot.log
+*.log
+logs/
