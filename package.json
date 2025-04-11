@@ -4,7 +4,8 @@
   "description": "An example application - make sure to configure this yourself.",
   "main": "bot.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prestart": "npm install",
+    "start": "node bot.js"
   },
   "author": "Pebblehost",
   "license": "ISC",
