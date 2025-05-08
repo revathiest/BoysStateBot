@@ -1,6 +1,7 @@
 # Environment and secrets
 .env
 config.json
+google-credentials.json
 
 # System/tool-specific files
 .vscode/launch.json
