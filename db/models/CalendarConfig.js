@@ -1,0 +1,34 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../index');
+
+const CalendarConfig = sequelize.define('CalendarConfig', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    comment: 'Primary key for calendar configs',
+  },
+  guildId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    comment: 'Discord Guild ID (server ID)',
+  },
+  calendarId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    comment: 'Google Calendar ID for the guild',
+  },
+}, {
+  tableName: 'calendar_configs',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: false,
+  indexes: [
+    {
+      unique: true,
+      fields: ['guildId', 'calendarId'],
+    },
+  ],
+});
+
+module.exports = CalendarConfig;
