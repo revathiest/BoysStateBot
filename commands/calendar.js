@@ -3,6 +3,7 @@ const setHandler = require('./calendar/set');
 const editHandler = require('./calendar/edit');
 const removeHandler = require('./calendar/remove');
 const listHandler = require('./calendar/list');
+const setChannelHandler = require('./calendar/set-channel');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,13 +19,25 @@ module.exports = {
         .addBooleanOption(option => option.setName('replace').setDescription('Replace existing calendars')))
     .addSubcommand(sub =>
       sub.setName('edit')
-        .setDescription('Updates or removes the label for a calendar.'))
+         .setDescription('Updates or removes the label for a calendar.')
+    )
     .addSubcommand(sub =>
       sub.setName('remove')
-        .setDescription('Removes a calendar from this server.'))
+         .setDescription('Removes a calendar from this server.')
+    )
     .addSubcommand(sub =>
       sub.setName('list')
-        .setDescription('Lists all calendars configured for this server.')),
+         .setDescription('Lists all calendars configured for this server.')
+    )
+    .addSubcommand(sub =>
+      sub.setName('set-channel')
+         .setDescription('Sets the notification channel for this server.')
+         .addChannelOption(opt =>
+           opt.setName('channel')
+              .setDescription('Channel to send notifications to')
+              .setRequired(true)
+         )
+    ),
 
   async execute(interaction) {
     const sub = interaction.options.getSubcommand();
@@ -35,5 +48,6 @@ module.exports = {
     if (sub === 'edit') return editHandler(interaction, guildId);
     if (sub === 'remove') return removeHandler(interaction, guildId);
     if (sub === 'list') return listHandler(interaction, guildId);
+    if (sub === 'set-channel') return setChannelHandler(interaction, guildId);
   },
 };
