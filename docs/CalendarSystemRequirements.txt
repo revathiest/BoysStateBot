@@ -37,28 +37,48 @@ The bot already includes the following implemented features:
 
 ### 1. Google Calendar Integration
 
-* Periodically query Google Calendar API (e.g., every 5 minutes) for each configured calendar.
+* Periodically query Google Calendar API **every 5 seconds** for each configured calendar.
+* **Polling interval is configurable per guild** (defaults to 5 seconds).
 * Always fetch live data from API for sync.
 * Support syncing one or more Google Calendar IDs per guild (already implemented).
+* Provide admin command to configure polling interval (e.g., `/calendar set-interval <seconds>`).
 
 ### 2. Database for Diff Tracking
 
 * Use existing database as a snapshot store for the last known state of synced events.
 * Compare API results with stored data to detect changes:
-
   * New event → send "Added" notification
   * Updated event → send "Updated" notification
   * Deleted event → send "Cancelled" notification
 * Update database after each sync to reflect current state.
+* The database is solely a reflection of Google Calendar data.
+* Events are only deleted from the database when they are deleted from Google Calendar.
+* Manual deletions or edits to database event records are not supported or expected.
+* If an event ID is missing from the database but exists in Google Calendar, it will be treated as a new event during the next sync.
 
 ### 3. Change Notifications
 
-* Post notifications in a **designated notification channel** per guild when changes are detected.
+* Post notifications in a **configured notification channel** per guild when calendar changes are detected.
+* Detect and notify:
+  * New event → send "Added" notification
+  * Updated event → send "Updated" notification
+  * Deleted event → send "Cancelled" notification
+* Only trigger "Updated" notification if:
+  * Event **start time changes**
+  * OR event **location changes**
+* Changes to title, description, or other fields **do not trigger an update notification**.
+* If no notification channel is configured:
+  * Do not post notifications.
+  * Send a direct message to the guild owner/admin **every time a notification is skipped** prompting them to configure a channel.
 
 ### 4. Reminders
 
-* Send reminder messages **X minutes before event starts** (reminder window configurable per guild).
-* Post reminders in the **configured notification channel**.
+* Send reminder messages **one or more times before event starts** (default: 30 minutes and 10 minutes).
+* Reminder times are **configurable per guild**, supporting multiple reminder intervals.
+* Post reminders in the configured notification channel.
+* If no notification channel is configured:
+  * Do not send reminders publicly.
+  * Send a direct message to the guild owner/admin **every time a reminder is skipped** prompting them to configure a channel.
 * Use API data for reminders (fallback to DB if API unavailable).
 
 ### 5. Listing Events
