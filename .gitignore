@@ -9,6 +9,3 @@ google-credentials.json
 # Dependency and build artifacts
 node_modules/
 *.zip
-bot.log
-*.log
-logs/
