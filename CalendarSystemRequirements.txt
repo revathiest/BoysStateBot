@@ -1,0 +1,114 @@
+# Boys State Agenda Bot – Calendar System Requirements
+
+## Purpose
+
+A Discord bot system to manage and broadcast agenda information for the New Mexico Boys State program. The bot integrates with Google Calendar to:
+
+* Send reminders to participants about upcoming events
+* Notify participants when the calendar changes (new, updated, or cancelled events)
+* Allow participants to list events for today or future dates
+
+---
+
+## Existing Functionality (Baseline)
+
+The bot already includes the following implemented features:
+
+✅ `/calendar` main command with subcommands:
+
+* `/calendar set` → Adds a Google Calendar ID (with optional label) for the guild.
+* `/calendar edit` → Edits the label of an existing calendar.
+* `/calendar remove` → Removes a calendar from the guild.
+* `/calendar list` → Lists calendars configured for the guild.
+
+✅ Permissions enforced:
+
+* Only users with `Administrator` permissions can run these commands.
+
+✅ Modular command structure using `SlashCommandBuilder` and handlers in `commands/calendar/` directory.
+
+✅ Database already exists (or assumed) for storing configured calendars.
+
+✅ Design allows for multiple calendars per guild.
+
+---
+
+## Additional Requirements
+
+### 1. Google Calendar Integration
+
+* Periodically query Google Calendar API (e.g., every 5 minutes) for each configured calendar.
+* Always fetch live data from API for sync.
+* Support syncing one or more Google Calendar IDs per guild (already implemented).
+
+### 2. Database for Diff Tracking
+
+* Use existing database as a snapshot store for the last known state of synced events.
+* Compare API results with stored data to detect changes:
+
+  * New event → send "Added" notification
+  * Updated event → send "Updated" notification
+  * Deleted event → send "Cancelled" notification
+* Update database after each sync to reflect current state.
+
+### 3. Change Notifications
+
+* Post notifications in a **designated notification channel** per guild when changes are detected.
+
+### 4. Reminders
+
+* Send reminder messages **X minutes before event starts** (reminder window configurable per guild).
+* Post reminders in the **configured notification channel**.
+* Use API data for reminders (fallback to DB if API unavailable).
+
+### 5. Listing Events
+
+* `/calendar list [today|tomorrow|YYYY-MM-DD]` → lists events for specified day.
+* Uses live API data if available; falls back to DB if API fails.
+* Output as embed with event name, start time, location.
+
+---
+
+## Administrative Configuration
+
+The following admin commands already exist and will be extended:
+
+| Command                                    | Description                      |
+| ------------------------------------------ | -------------------------------- |
+| `/calendar set <calendar_id> [label]`      | Add a calendar ID for this guild |
+| `/calendar edit <calendar_id> [new_label]` | Edit calendar label              |
+| `/calendar remove <calendar_id>`           | Remove a calendar                |
+| `/calendar list`                           | List configured calendars        |
+
+New admin commands to add:
+
+| Command                            | Description                                    |               |                                 |
+| ---------------------------------- | ---------------------------------------------- | ------------- | ------------------------------- |
+| `/calendar set-channel <#channel>` | Set notification/reminder channel              |               |                                 |
+| `/calendar set-reminder <minutes>` | Set reminder window (lead time)                |               |                                 |
+| `/calendar sync`                   | Manually trigger calendar sync + notifications |               |                                 |
+| \`/calendar events \[today         | tomorrow                                       | YYYY-MM-DD]\` | List events for a specific date |
+
+---
+
+## System Behavior
+
+✅ Existing calendar management commands remain unchanged.
+✅ Notification channel & reminder window will be per-guild settings stored in DB.
+✅ Change notifications generated from API-to-DB diff.
+✅ Always prioritize API data; DB serves only for diff tracking and fallback.
+✅ No per-user subscriptions, no role mentions, no DMs.
+
+---
+
+## Summary
+
+The bot is already capable of managing configured calendars at the guild level.
+This updated specification extends functionality to automate:
+
+* Event syncing from Google Calendar
+* Change notifications
+* Scheduled reminders
+* Listing events
+
+All while preserving existing features and command structure.
