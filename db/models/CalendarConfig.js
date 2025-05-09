@@ -17,7 +17,12 @@ const CalendarConfig = sequelize.define('CalendarConfig', {
     type: DataTypes.STRING,
     allowNull: false,
     comment: 'Google Calendar ID for the guild',
-  },
+  }, 
+  label: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    comment: 'User-friendly name or alias for the calendar',
+  }, 
 }, {
   tableName: 'calendar_configs',
   timestamps: true,

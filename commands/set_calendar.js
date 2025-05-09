@@ -14,15 +14,19 @@ module.exports = {
     .addBooleanOption(option =>
       option.setName('replace')
         .setDescription('Replace existing calendars for this server?'))
+    .addStringOption(option =>
+      option.setName('label')
+        .setDescription('A custom name for this calendar (optional)'))
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setDMPermission(false),
 
   async execute(interaction) {
     const calendarId = interaction.options.getString('calendar_id');
     const replace = interaction.options.getBoolean('replace');
+    const userLabel = interaction.options.getString('label');
     const guildId = interaction.guildId;
 
-    console.log(`[set_calendar] Received command: calendarId=${calendarId}, replace=${replace}, guildId=${guildId}`);
+    console.log(`[set_calendar] Received command: calendarId=${calendarId}, replace=${replace}, label=${userLabel}, guildId=${guildId}`);
 
     try {
       console.log('[set_calendar] Initializing Google auth...');
@@ -30,44 +34,38 @@ module.exports = {
         keyFile: path.join(__dirname, '../google-credentials.json'),
         scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
       });
-      
+
       const calendar = google.calendar({ version: 'v3', auth });
-      
+
       console.log('[set_calendar] Attempting to fetch calendar metadata...');
       let calendarInfoRes;
-      
       try {
         calendarInfoRes = await calendar.calendars.get({ calendarId });
         console.log('[set_calendar] Calendar metadata fetched:', calendarInfoRes.data);
       } catch (error) {
         console.error('[set_calendar] ❌ Calendar validation failed:', error);
-      
         let message = '❌ Calendar not found or inaccessible.\nPlease check the ID and ensure the service account has access.';
-        
         if (error.code !== 404) {
           message = `❌ Failed to validate calendar:\n\`${error.message}\``;
         }
-      
-        return await interaction.reply({
-          content: message,
-          ephemeral: true,
-        });
+        return await interaction.reply({ content: message, ephemeral: true });
       }
-      
+
+      const label = userLabel || calendarInfoRes.data.summary || calendarId;
+      console.log(`[set_calendar] Using label: ${label}`);
+
       if (replace) {
         console.log('[set_calendar] Replacing existing calendar configs...');
         await CalendarConfig.destroy({ where: { guildId } });
       }
 
       console.log('[set_calendar] Saving calendar config to database...');
-      await CalendarConfig.create({ guildId, calendarId });
-
-      console.log('[set_calendar] Calendar config saved successfully.');
+      await CalendarConfig.create({ guildId, calendarId, label });
 
       await interaction.reply({
         content: replace
-          ? `✅ Existing calendars replaced. Set calendar ID to \`${calendarId}\`.`
-          : `✅ Added calendar ID \`${calendarId}\` for this server.`,
+          ? `✅ Existing calendars replaced. Added calendar **${label}** (\`${calendarId}\`).`
+          : `✅ Added calendar **${label}** (\`${calendarId}\`) for this server.`,
         ephemeral: true,
       });
 
