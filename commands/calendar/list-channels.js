@@ -1,4 +1,4 @@
-const NotificationChannel = require('../../db/models').NotificationChannels;
+const NotificationChannels = require('../../db/models').NotificationChannels;
 
 module.exports = async function listChannels(interaction, guildId) {
   console.log('[calendar:list-channels] Listing notification channels...');
@@ -20,7 +20,7 @@ module.exports = async function listChannels(interaction, guildId) {
     const list = configs.map(c => {
       const channel = interaction.guild.channels.cache.get(c.channelId);
       if (channel) {
-        return `• **#${channel.name}** (${channel.id})`;
+        return `• **#${channel.name}**`;
       } else {
         return `• ⚠️ Unknown Channel (ID: \`${c.channelId}\`)`;
       }
