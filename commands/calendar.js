@@ -4,6 +4,8 @@ const editHandler = require('./calendar/edit');
 const removeHandler = require('./calendar/remove');
 const listHandler = require('./calendar/list');
 const setChannelHandler = require('./calendar/set-channel');
+const listChannelsHandler = require('./calendar/list-channels');
+const removeChannelHandler = require('./calendar/remove-channel');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -37,6 +39,19 @@ module.exports = {
               .setDescription('Channel to send notifications to')
               .setRequired(true)
          )
+    )
+    .addSubcommand(sub =>
+      sub.setName('list-channels')
+         .setDescription('Lists notification channels configured for this server.')
+    )
+    .addSubcommand(sub =>
+      sub.setName('remove-channel')
+         .setDescription('Removes a notification channel.')
+         .addStringOption(opt =>
+           opt.setName('channel_id')
+              .setDescription('The channel ID to remove.')
+              .setRequired(true)
+         )
     ),
 
   async execute(interaction) {
@@ -49,5 +64,7 @@ module.exports = {
     if (sub === 'remove') return removeHandler(interaction, guildId);
     if (sub === 'list') return listHandler(interaction, guildId);
     if (sub === 'set-channel') return setChannelHandler(interaction, guildId);
+    if (sub === 'list-channels') return listChannelsHandler(interaction, guildId);
+    if (sub === 'remove-channel') return removeChannelHandler(interaction, guildId);
   },
 };

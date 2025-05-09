@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../index');
 
-const NotificationChannel = sequelize.define('NotificationChannel', {
+const NotificationChannel = sequelize.define('NotificationChannels', {
   guildId: {
     type: DataTypes.STRING,
     primaryKey: true,
