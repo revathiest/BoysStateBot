@@ -1,19 +1,20 @@
 const { google } = require('googleapis');
+const path = require('path');
 const CalendarConfig = require('../db/models').CalendarConfig;
 const CalendarEvent = require('../db/models').CalendarEvent;
 
-// TODO: Replace with your auth client
 const auth = new google.auth.GoogleAuth({
+  keyFile: path.join(__dirname, '../google-credentials.json'),
   scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
 });
 
 async function pollCalendars() {
-  const calendarClient = google.calendar({ version: 'v3', auth });
+  const authClient = await auth.getClient();
+  const calendarClient = google.calendar({ version: 'v3', auth: authClient });
   const configs = await CalendarConfig.findAll();
 
   for (const config of configs) {
     const { guildId, calendarId } = config;
-    console.log(`[${guildId}] Polling calendar: ${calendarId}`);
 
     const res = await calendarClient.events.list({
       calendarId,
@@ -36,12 +37,14 @@ async function pollCalendars() {
 
       if (!existing) {
         await CalendarEvent.create({
-          guildId, calendarId, eventId: apiEvent.id,
+          guildId,
+          calendarId,
+          eventId: apiEvent.id,
           summary: apiEvent.summary || '',
           location,
-          startTime, endTime,
+          startTime,
+          endTime,
         });
-        console.log(`[${guildId}] ADDED event: ${apiEvent.summary}`);
         // TODO: send "Added" notification
       } else if (
         existing.startTime.getTime() !== startTime.getTime() ||
@@ -52,13 +55,11 @@ async function pollCalendars() {
         existing.location = location;
         existing.summary = apiEvent.summary || '';
         await existing.save();
-        console.log(`[${guildId}] UPDATED event: ${apiEvent.summary}`);
         // TODO: send "Updated" notification
       }
     }
 
-    // Check for deleted events
-    const currentEventIds = events.map(e => e.id);
+    const currentEventIds = events.map((e) => e.id);
     const staleEvents = await CalendarEvent.findAll({
       where: {
         guildId,
@@ -69,7 +70,6 @@ async function pollCalendars() {
 
     for (const stale of staleEvents) {
       await stale.destroy();
-      console.log(`[${guildId}] CANCELLED event: ${stale.summary}`);
       // TODO: send "Cancelled" notification
     }
   }
