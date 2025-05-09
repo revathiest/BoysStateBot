@@ -1,4 +1,4 @@
-const NotificationChannel = require('../../db/models/NotificationChannel');
+const NotificationChannel = require('../../db/models/NotificationChannels');
 
 module.exports = async function setChannel(interaction, guildId) {
   console.log('[calendar:set-channel] Setting notification channel...');
