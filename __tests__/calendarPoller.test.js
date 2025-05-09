@@ -4,12 +4,22 @@ jest.mock('../db/models', () => ({
     CalendarEvent: { findOne: jest.fn(), findAll: jest.fn(), create: jest.fn() },
   }));
   
-  jest.mock('googleapis', () => ({
-    google: {
-      calendar: jest.fn(),
-      auth: { GoogleAuth: jest.fn() },
-    },
-  }));
+  jest.mock('googleapis', () => {
+    const getClient = jest.fn().mockResolvedValue('mockAuthClient');
+  
+    return {
+      google: {
+        auth: {
+          GoogleAuth: jest.fn(() => ({ getClient }))
+        },
+        calendar: jest.fn(() => ({
+          events: {
+            list: jest.fn().mockResolvedValue({ data: { items: [] } }),
+          },
+        })),
+      },
+    };
+  });
   
   const { google } = require('googleapis');
   const { CalendarConfig, CalendarEvent } = require('../db/models');
