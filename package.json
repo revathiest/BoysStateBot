@@ -5,9 +5,10 @@
   "main": "bot.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "test": "jest"
   },
-  "author": "Pebblehost",
+  "author": "Ken Hart",
   "license": "ISC",
   "dependencies": {
     "discord.js": "*",
@@ -17,5 +18,8 @@
     "mysql2": "3.14.0",
     "sequelize": "6.37.7"
   },
-  "nodeVersion": "23.1.0"
+  "nodeVersion": "23.1.0",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }

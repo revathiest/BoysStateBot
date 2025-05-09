@@ -3,6 +3,7 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const commandHandler = require('./handlers/commandHandler');
 const interactionHandler = require('./handlers/interactionHandler');
+const { pollCalendars } = require('./utils/calendarPoller');
 
 const client = new Client({
   intents: [
@@ -27,6 +28,12 @@ client.login(process.env.DISCORD_TOKEN)
 
 // Load commands after ready
 client.once('ready', async () => {
-  console.log(`✅ Logged in as ${client.user.tag}`);
+  console.log(`🎉 Logged in as ${client.user.tag}`);
   await commandHandler(client);
+
+  // Start polling every 5 seconds
+  setInterval(() => {
+    pollCalendars().catch(err => console.error('Poller error:', err));
+  }, 5000);
 });
+
