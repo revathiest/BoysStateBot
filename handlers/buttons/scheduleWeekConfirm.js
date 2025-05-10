@@ -25,7 +25,8 @@ module.exports = async (interaction) => {
     });
 
     if (!events.length) {
-      return await interaction.reply({
+      return await interaction.update({
+        content: '',
         embeds: [buildScheduleEmbed("This Week’s Schedule", "No events scheduled for this week.", 0xCCCCCC)],
         flags: MessageFlags.Ephemeral,
       });
@@ -49,13 +50,14 @@ module.exports = async (interaction) => {
       return buildScheduleEmbed(`Schedule for ${day}`, list);
     });
 
-    await interaction.reply({ embeds: embeds.slice(0, 10), flags: MessageFlags.Ephemeral });
+    await interaction.update({ content: '', embeds: embeds.slice(0, 10), flags: MessageFlags.Ephemeral });
     for (let i = 10; i < embeds.length; i += 10) {
       await interaction.followUp({ embeds: embeds.slice(i, i + 10), flags: MessageFlags.Ephemeral });
     }
   } catch (err) {
     console.error('[schedule:week_confirm] ❌ Error listing schedule:', err);
-    await interaction.reply({
+    await interaction.update({
+      content: '',
       embeds: [buildScheduleEmbed('❌ Error Fetching Weekly Schedule', `An unexpected error occurred:\n\`${err.message}\``, 0xFF0000)],
       flags: MessageFlags.Ephemeral,
     });
