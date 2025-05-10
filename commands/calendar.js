@@ -6,6 +6,7 @@ const listHandler = require('./calendar/list');
 const setChannelHandler = require('./calendar/set-channel');
 const listChannelsHandler = require('./calendar/list-channels');
 const removeChannelHandler = require('./calendar/remove-channel');
+const setDateRangeHandler = require('./calendar/set-daterange');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -52,8 +53,21 @@ module.exports = {
               .setDescription('The channel ID to remove.')
               .setRequired(true)
          )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('set-daterange')
+        .setDescription('Sets the calendar poll date range (YYYY-MM-DD)')
+        .addStringOption(option =>
+          option.setName('start')
+            .setDescription('Start date (YYYY-MM-DD)')
+            .setRequired(true))
+        .addStringOption(option =>
+          option.setName('end')
+            .setDescription('End date (YYYY-MM-DD)')
+            .setRequired(true)
+        )
     ),
-
   async execute(interaction) {
     const sub = interaction.options.getSubcommand();
     const guildId = interaction.guildId;
@@ -66,5 +80,6 @@ module.exports = {
     if (sub === 'set-channel') return setChannelHandler(interaction, guildId);
     if (sub === 'list-channels') return listChannelsHandler(interaction, guildId);
     if (sub === 'remove-channel') return removeChannelHandler(interaction, guildId);
+    if (sub === 'set-daterange') return setDateRangeHandler(interaction, guildId);
   },
 };

@@ -23,6 +23,14 @@ const CalendarConfig = sequelize.define('CalendarConfig', {
     allowNull: true,
     comment: 'User-friendly name or alias for the calendar',
   }, 
+  startDate: {
+    type: DataTypes.DATEONLY, // YYYY-MM-DD
+    allowNull: true
+  },
+  endDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
+  },
 }, {
   tableName: 'calendar_configs',
   timestamps: true,
