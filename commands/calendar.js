@@ -19,21 +19,26 @@ module.exports = {
         .addStringOption(option => option.setName('calendar_id').setDescription('Calendar ID').setRequired(true))
         .addStringOption(option => option.setName('label').setDescription('Optional label'))
         .addBooleanOption(option => option.setName('replace').setDescription('Replace existing calendars')))
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addSubcommand(sub =>
       sub.setName('edit')
          .setDescription('Updates or removes the label for a calendar.')
+         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     )
     .addSubcommand(sub =>
       sub.setName('remove')
          .setDescription('Removes a calendar from this server.')
+         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     )
     .addSubcommand(sub =>
       sub.setName('list')
          .setDescription('Lists all calendars configured for this server.')
+         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     )
     .addSubcommand(sub =>
       sub.setName('set-channel')
          .setDescription('Sets the notification channel for this server.')
+         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
          .addChannelOption(opt =>
            opt.setName('channel')
               .setDescription('Channel to send notifications to')
@@ -43,9 +48,11 @@ module.exports = {
     .addSubcommand(sub =>
       sub.setName('list-channels')
          .setDescription('Lists notification channels configured for this server.')
+         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     )
     .addSubcommand(sub =>
       sub.setName('remove-channel')
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
          .setDescription('Removes a notification channel.')
          .addStringOption(opt =>
            opt.setName('channel_id')
