@@ -103,11 +103,9 @@ async function pollCalendars(client) {
 
           const changes = {};
           if (existing.startTime.getTime() !== startTime.getTime()) {
-            console.log(`[${guildId}] 🕒 Start time difference detected`);
             changes.startTime = { old: existing.startTime, new: startTime };
           }
           if (existing.location !== location) {
-            console.log(`[${guildId}] 📍 Location difference detected`);
             changes.location = { old: existing.location, new: location };
           }
 
@@ -118,7 +116,6 @@ async function pollCalendars(client) {
           await existing.save();
 
           if (channel) {
-            console.log(`[${guildId}] Sending update notification...`);
             const embed = buildEventEmbed('updated', summary, startTime, location, changes);
             await channel.send({ embeds: [embed] });
           }
