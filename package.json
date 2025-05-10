@@ -4,9 +4,9 @@
   "description": "An example application - make sure to configure this yourself.",
   "main": "bot.js",
   "scripts": {
-    "prestart": "npm install",
+    "prestart": "node -e \"process.stdout.write('\\x1Bc')\" && npm install",
     "start": "node bot.js",
-    "test": "jest"
+    "test": "node --no-deprecation -e \"process.stdout.write('\\x1Bc')\" && jest --silent"
   },
   "author": "Ken Hart",
   "license": "ISC",
