@@ -52,4 +52,17 @@ module.exports = async (client, interaction) => {
     }
     return;
   }
+  
+  if (interaction.isButton()) {
+    const baseId = interaction.customId.includes('_') ? interaction.customId.split('_').slice(0, -1).join('_') : interaction.customId;
+    const handlerPath = `./buttons/${toCamelCase(baseId)}.js`;
+  
+    try {
+      const handler = require(handlerPath);
+      return await handler(interaction);
+    } catch (err) {
+      console.error(`❌ No handler for button ${interaction.customId} (${handlerPath}):`, err);
+    }
+    return;
+  }  
 };
