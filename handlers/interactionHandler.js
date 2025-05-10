@@ -56,7 +56,6 @@ module.exports = async (client, interaction) => {
   if (interaction.isButton()) {
     const baseId = interaction.customId.includes('_') ? interaction.customId.split('_').slice(0, -1).join('_') : interaction.customId;
     const handlerPath = `./buttons/${toCamelCase(baseId)}.js`;
-  
     try {
       const handler = require(handlerPath);
       return await handler(interaction);
