@@ -10,30 +10,53 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
 });
 
-// 🔥 NEW: helper function for building notification embeds
-function buildEventEmbed(type, summary, startTime, location) {
+function buildEventEmbed(type, summary, startTime, location, changes = {}) {
   const embed = new EmbedBuilder()
-    .setTitle('📅 Calendar Event Notification')
+    .setTitle('<:newmexicoflag:1370750476332564520> NM Boys & Girls State Schedule Update')
     .setColor(
       type === 'added' ? 0x2ECC71 :
       type === 'updated' ? 0x3498DB :
       0xE74C3C
     )
     .setDescription(
-      type === 'added' ? '✅ **New event added!**' :
-      type === 'updated' ? '🔄 **Event updated!**' :
-      '❌ **Event cancelled!**'
+      type === 'added' ? '✅ **A new schedule item has been added!**' :
+      type === 'updated' ? '🔄 **A schedule item has been updated!**' :
+      '❌ **A schedule item has been cancelled!**'
     )
+    .setThumbnail('https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_New_Mexico.svg')
     .addFields(
-      { name: 'Event', value: summary, inline: true },
-      { name: 'Start', value: startTime.toLocaleString(), inline: true },
-      { name: 'Location', value: location || 'N/A', inline: true },
-    );
+      { name: '**Event**', value: `${summary || 'Untitled Event'}`, inline: false },
+      { name: '**Start**', value: `<t:${Math.floor(startTime.getTime() / 1000)}:F>`, inline: true },
+      { name: '**Location**', value: location || '_TBD_', inline: false },
+    )
+    .setTimestamp()
+    .setFooter({ text: 'New Mexico Boys & Girls State' });
+
+  if (type === 'updated') {
+    if (changes.startTime) {
+      embed.addFields({
+        name: '**Time Updated**',
+        value: `from: <t:${Math.floor(changes.startTime.old.getTime() / 1000)}:F>\nto:   <t:${Math.floor(changes.startTime.new.getTime() / 1000)}:F>`,
+        inline: false,
+      });
+    }
+    if (changes.location) {
+      embed.addFields({
+        name: '**Location Updated**',
+        value: `from: ${changes.location.old || '_none_'}\nto:   ${changes.location.new || '_none_'}`,
+        inline: false,
+      });
+    }
+  }
 
   return embed;
 }
 
 async function pollCalendars(client) {
+  if (!client || !client.channels || typeof client.channels.fetch !== 'function') {
+    throw new Error('[pollCalendars] A valid Discord client must be passed to pollCalendars(client)');
+  }
+
   const authClient = await auth.getClient();
   const calendarClient = google.calendar({ version: 'v3', auth: authClient });
   const configs = await CalendarConfig.findAll();
@@ -42,9 +65,14 @@ async function pollCalendars(client) {
     const { guildId, calendarId } = config;
 
     try {
+      const now = new Date();
+      const timeMin = new Date(now.getTime() - (10 * 24 * 60 * 60 * 1000));
+      const timeMax = new Date(now.getTime() + (10 * 24 * 60 * 60 * 1000));
+
       const res = await calendarClient.events.list({
         calendarId,
-        timeMin: new Date().toISOString(),
+        timeMin: timeMin.toISOString(),
+        timeMax: timeMax.toISOString(),
         maxResults: 2500,
         singleEvents: true,
         orderBy: 'startTime',
@@ -72,13 +100,26 @@ async function pollCalendars(client) {
             await channel.send({ embeds: [embed] });
           }
         } else if (existing.startTime.getTime() !== startTime.getTime() || existing.location !== location) {
+
+          const changes = {};
+          if (existing.startTime.getTime() !== startTime.getTime()) {
+            console.log(`[${guildId}] 🕒 Start time difference detected`);
+            changes.startTime = { old: existing.startTime, new: startTime };
+          }
+          if (existing.location !== location) {
+            console.log(`[${guildId}] 📍 Location difference detected`);
+            changes.location = { old: existing.location, new: location };
+          }
+
           existing.startTime = startTime;
           existing.endTime = endTime;
           existing.location = location;
           existing.summary = summary;
           await existing.save();
+
           if (channel) {
-            const embed = buildEventEmbed('updated', summary, startTime, location);
+            console.log(`[${guildId}] Sending update notification...`);
+            const embed = buildEventEmbed('updated', summary, startTime, location, changes);
             await channel.send({ embeds: [embed] });
           }
         }

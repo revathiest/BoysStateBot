@@ -83,4 +83,7 @@ describe('calendarPoller', () => {
     expect(fetchMock).toHaveBeenCalledWith('1234567890');
     expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({ embeds: expect.any(Array) }));
   });
+  test('throws descriptive error if client is missing', async () => {
+    await expect(pollCalendars()).rejects.toThrow('[pollCalendars] A valid Discord client must be passed');
+  });  
 });

@@ -33,7 +33,7 @@ client.once('ready', async () => {
 
   // Start polling every 5 seconds
   setInterval(() => {
-    pollCalendars().catch(err => console.error('Poller error:', err));
+    pollCalendars(client).catch(err => console.error('Poller error:', err));
   }, 5000);
 });
 
