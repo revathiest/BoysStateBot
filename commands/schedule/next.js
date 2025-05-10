@@ -2,6 +2,7 @@ const CalendarEvent = require('../../db/models').CalendarEvent;
 const { Op } = require('sequelize');
 const formatScheduleList = require('../../utils/scheduleFormatter');
 const buildScheduleEmbed = require('../../utils/scheduleEmbedBuilder');
+const { MessageFlags } = require('discord.js');
 
 module.exports = async function next(interaction, guildId) {
   try {
@@ -23,7 +24,7 @@ module.exports = async function next(interaction, guildId) {
           color: 0xCCCCCC,
           footer: { text: 'New Mexico Boys & Girls State' },
         }],
-        ephemeral: false,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -31,13 +32,13 @@ module.exports = async function next(interaction, guildId) {
 
     await interaction.reply({
         embeds: [buildScheduleEmbed(`Next Event`, list)],
-      ephemeral: false,
+        flags: MessageFlags.Ephemeral,
     });
   } catch (err) {
     console.error('[schedule:next] ❌ Error fetching next event:', err);
     await interaction.reply({
       embeds: [buildScheduleEmbed('Next Event', 'There are no upcoming events scheduled.', 0xCCCCCC)],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 };

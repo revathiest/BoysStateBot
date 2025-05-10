@@ -2,6 +2,7 @@ const CalendarEvent = require('../../db/models').CalendarEvent;
 const { Op } = require('sequelize');
 const formatScheduleList = require('../../utils/scheduleFormatter');
 const buildScheduleEmbed = require('../../utils/scheduleEmbedBuilder');
+const { MessageFlags } = require('discord.js');
 
 module.exports = async function today(interaction, guildId) {
   try {
@@ -28,7 +29,7 @@ module.exports = async function today(interaction, guildId) {
           color: 0xCCCCCC,
           footer: { text: 'New Mexico Boys & Girls State' },
         }],
-        ephemeral: false,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -36,13 +37,13 @@ module.exports = async function today(interaction, guildId) {
 
     await interaction.reply({
       embeds: [buildScheduleEmbed(`Today's Schedule`, list)], 
-      ephemeral: false,
+      flags: MessageFlags.Ephemeral,
     });
   } catch (err) {
     console.error('[schedule:today] ❌ Error listing schedule:', err);
     await interaction.reply({
       embeds: [buildScheduleEmbed('Today’s Schedule', 'No events scheduled for today.', 0xCCCCCC)],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 };
