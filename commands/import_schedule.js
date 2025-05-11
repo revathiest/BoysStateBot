@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { google } = require('googleapis');
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { CalendarConfig } = require('../db/models');
 const auth = require('../utils/googleAuth');
 
