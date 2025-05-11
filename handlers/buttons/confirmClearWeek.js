@@ -3,13 +3,10 @@ const { CalendarConfig } = require('../../db/models');
 const auth = require('../../utils/googleAuth');
 
 module.exports = async (interaction) => {
-  console.log('[DEBUG] Button interaction triggered:', interaction.customId);
 
   const parts = interaction.customId.split('_');
   const action = parts.slice(0, -1).join('_'); // 'confirm_clear_week'
   const [userId, guildId] = parts.at(-1).split(':');
-  
-  console.log('[DEBUG] Parsed ID:', { action, userId, guildId });
   
   if (action !== 'confirm_clear_week') return;
 
@@ -24,10 +21,7 @@ module.exports = async (interaction) => {
   await interaction.deferReply({ ephemeral: true });
 
   try {
-    console.log('[DEBUG] Fetching calendar config for guild:', guildId);
     const config = await CalendarConfig.findOne({ where: { guildId: interaction.guildId } });
-    console.log('[DEBUG] customId.guildId:', guildId);
-    console.log('[DEBUG] interaction.guildId:', interaction.guildId);
 
     if (!config?.calendarId) {
       console.warn('[DEBUG] No calendar configured for this guild:', guildId);
@@ -42,8 +36,6 @@ module.exports = async (interaction) => {
     const timeMin = new Date('2025-06-01T00:00:00Z').toISOString();
     const timeMax = new Date('2025-06-07T00:00:00Z').toISOString();
 
-    console.log('[DEBUG] Listing events between', timeMin, 'and', timeMax);
-
     const res = await calendar.events.list({
       calendarId: config.calendarId,
       timeMin,
@@ -54,7 +46,6 @@ module.exports = async (interaction) => {
     });
 
     const events = res.data.items || [];
-    console.log(`[DEBUG] Found ${events.length} events to delete.`);
 
     const deleted = [];
     const failed = [];
@@ -65,7 +56,6 @@ module.exports = async (interaction) => {
           calendarId: config.calendarId,
           eventId: event.id,
         });
-        console.log(`[DEBUG] Deleted event: ${event.summary || event.id}`);
         deleted.push(event.summary || event.id);
       } catch (err) {
         console.error(`[ERROR] Failed to delete event: ${event.summary || event.id}`, err);
