@@ -17,7 +17,7 @@ module.exports = {
       .setFooter({ text: 'This will affect the production calendar.' });
 
     const button = new ButtonBuilder()
-      .setCustomId(`confirm-clear-week:${interaction.user.id}:${interaction.guildId}`)
+      .setCustomId(`confirm_clear_week_${interaction.user.id}:${interaction.guildId}`)
       .setLabel('Yes, delete the week')
       .setStyle(ButtonStyle.Danger);
 
