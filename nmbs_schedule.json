@@ -1,0 +1,695 @@
+[
+  {
+    "summary": "Registration",
+    "date": "2025-06-01",
+    "start": "12:00",
+    "end": "15:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "General Assembly Becky Sharp",
+    "date": "2025-06-01",
+    "start": "15:00",
+    "end": "16:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Honesty And Morality",
+    "date": "2025-06-01",
+    "start": "16:00",
+    "end": "16:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Law Instruction (mock Court)",
+    "date": "2025-06-01",
+    "start": "16:15",
+    "end": "17:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Presenter-ethics, Overview Of City",
+    "date": "2025-06-01",
+    "start": "17:00",
+    "end": "17:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Proceed To Party Conventions",
+    "date": "2025-06-01",
+    "start": "17:30",
+    "end": "19:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Begin Organizing City",
+    "date": "2025-06-01",
+    "start": "19:00",
+    "end": "19:40",
+    "location": "TBD"
+  },
+  {
+    "summary": "City Campaign Windup",
+    "date": "2025-06-01",
+    "start": "19:40",
+    "end": "20:35",
+    "location": "TBD"
+  },
+  {
+    "summary": "Presenter \u2013 Candidates Names To Voting",
+    "date": "2025-06-01",
+    "start": "20:35",
+    "end": "21:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation \u2013 Return To Residence",
+    "date": "2025-06-01",
+    "start": "21:30",
+    "end": "22:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lights Out Good Night Citizens",
+    "date": "2025-06-01",
+    "start": "22:00",
+    "end": "22:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Everybody Rise And Shine, Clean Up Cities,",
+    "date": "2025-06-02",
+    "start": "06:30",
+    "end": "07:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities, Flag Raising",
+    "date": "2025-06-02",
+    "start": "07:15",
+    "end": "07:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Close\u2014city Elections",
+    "date": "2025-06-02",
+    "start": "07:30",
+    "end": "08:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "General Assembly C.u.b.",
+    "date": "2025-06-02",
+    "start": "08:45",
+    "end": "09:05",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To Cities-city Election Results",
+    "date": "2025-06-02",
+    "start": "09:05",
+    "end": "11:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Memorial Formation/flag Pole",
+    "date": "2025-06-02",
+    "start": "11:45",
+    "end": "12:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lunch",
+    "date": "2025-06-02",
+    "start": "12:00",
+    "end": "12:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation In Cities For Head Count",
+    "date": "2025-06-02",
+    "start": "12:45",
+    "end": "14:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Court Cases",
+    "date": "2025-06-02",
+    "start": "14:30",
+    "end": "15:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Recreation",
+    "date": "2025-06-02",
+    "start": "15:30",
+    "end": "16:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return From Recreation",
+    "date": "2025-06-02",
+    "start": "16:30",
+    "end": "16:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities\u2014lowering Of Colors",
+    "date": "2025-06-02",
+    "start": "16:45",
+    "end": "17:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Supper",
+    "date": "2025-06-02",
+    "start": "17:00",
+    "end": "17:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Proceed To Becky Sharp",
+    "date": "2025-06-02",
+    "start": "17:45",
+    "end": "18:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "County Primary Convention By Parties",
+    "date": "2025-06-02",
+    "start": "18:30",
+    "end": "19:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "County Primary Names To Office",
+    "date": "2025-06-02",
+    "start": "19:30",
+    "end": "20:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Open",
+    "date": "2025-06-02",
+    "start": "20:00",
+    "end": "20:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Close",
+    "date": "2025-06-02",
+    "start": "20:15",
+    "end": "20:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "ENMU Presentation",
+    "date": "2025-06-02",
+    "start": "20:30",
+    "end": "21:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To Residence By Cities",
+    "date": "2025-06-02",
+    "start": "21:30",
+    "end": "22:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lights Out Good Night Citizens",
+    "date": "2025-06-02",
+    "start": "22:00",
+    "end": "22:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Everybody Rise And Shine, Clean Up Cities,",
+    "date": "2025-06-03",
+    "start": "06:30",
+    "end": "07:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities, Flag Raising",
+    "date": "2025-06-03",
+    "start": "07:15",
+    "end": "07:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Breakfast\u2014staff Meeting",
+    "date": "2025-06-03",
+    "start": "07:30",
+    "end": "08:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Organize By Cities For Head Count",
+    "date": "2025-06-03",
+    "start": "08:45",
+    "end": "09:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Open County Elections",
+    "date": "2025-06-03",
+    "start": "09:30",
+    "end": "09:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Close",
+    "date": "2025-06-03",
+    "start": "09:45",
+    "end": "10:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "State Primary Convention; Nationalists\u2014zia",
+    "date": "2025-06-03",
+    "start": "10:00",
+    "end": "11:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "House And Senate Responsibilities Explained",
+    "date": "2025-06-03",
+    "start": "11:00",
+    "end": "11:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "State Primary Candidates Names To Office",
+    "date": "2025-06-03",
+    "start": "11:30",
+    "end": "11:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Wait Staff To Kitchen",
+    "date": "2025-06-03",
+    "start": "11:45",
+    "end": "12:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lunch",
+    "date": "2025-06-03",
+    "start": "12:00",
+    "end": "12:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation Ballroom\u2014flag Presentation -",
+    "date": "2025-06-03",
+    "start": "12:45",
+    "end": "13:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "County Organize",
+    "date": "2025-06-03",
+    "start": "13:45",
+    "end": "15:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Recreation",
+    "date": "2025-06-03",
+    "start": "15:00",
+    "end": "16:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return From Recreation",
+    "date": "2025-06-03",
+    "start": "16:30",
+    "end": "16:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities\u2014lowering Of Colors",
+    "date": "2025-06-03",
+    "start": "16:45",
+    "end": "17:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Supper \u2013 Polls Open \u2013 State Primary",
+    "date": "2025-06-03",
+    "start": "17:00",
+    "end": "17:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Close",
+    "date": "2025-06-03",
+    "start": "17:15",
+    "end": "18:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities Outside Of Ballroom\u2014head Count",
+    "date": "2025-06-03",
+    "start": "18:00",
+    "end": "18:10",
+    "location": "TBD"
+  },
+  {
+    "summary": "House And Senate In Session",
+    "date": "2025-06-03",
+    "start": "18:10",
+    "end": "21:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "State Primary Election Results",
+    "date": "2025-06-03",
+    "start": "21:30",
+    "end": "21:50",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To Residence By Cities",
+    "date": "2025-06-03",
+    "start": "21:50",
+    "end": "22:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lights Out \u2013 Good Night Citizens",
+    "date": "2025-06-03",
+    "start": "22:30",
+    "end": "23:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Everybody Rise And Shine, Clean Up Cities,",
+    "date": "2025-06-04",
+    "start": "06:30",
+    "end": "07:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities, Flag Raising",
+    "date": "2025-06-04",
+    "start": "07:15",
+    "end": "07:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Breakfast",
+    "date": "2025-06-04",
+    "start": "07:30",
+    "end": "08:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Cities\u2014proceed To Ballroom",
+    "date": "2025-06-04",
+    "start": "08:30",
+    "end": "08:40",
+    "location": "TBD"
+  },
+  {
+    "summary": "The Great Debate",
+    "date": "2025-06-04",
+    "start": "08:40",
+    "end": "09:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Legislature In Session",
+    "date": "2025-06-04",
+    "start": "09:30",
+    "end": "11:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Open\u2014state General Election",
+    "date": "2025-06-04",
+    "start": "11:45",
+    "end": "12:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lunch--polls Close\u2014state General Election",
+    "date": "2025-06-04",
+    "start": "12:00",
+    "end": "12:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Becky Sharp \u2013 General Election Results",
+    "date": "2025-06-04",
+    "start": "12:45",
+    "end": "14:50",
+    "location": "TBD"
+  },
+  {
+    "summary": "Proceed To Becky Sharp For Announcements",
+    "date": "2025-06-04",
+    "start": "14:50",
+    "end": "15:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Recreation",
+    "date": "2025-06-04",
+    "start": "15:00",
+    "end": "17:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return From Recreation (shower & Dress Pants)",
+    "date": "2025-06-04",
+    "start": "17:00",
+    "end": "17:40",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation - Lowering Of Colors",
+    "date": "2025-06-04",
+    "start": "17:40",
+    "end": "18:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Banquet At C.u.b. Ballroom",
+    "date": "2025-06-04",
+    "start": "18:00",
+    "end": "19:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "2025 Inauguration Ceremonies",
+    "date": "2025-06-04",
+    "start": "19:00",
+    "end": "20:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "City. County, State Offices In Operation",
+    "date": "2025-06-04",
+    "start": "20:00",
+    "end": "21:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Us Marshall Presentation/becky Sharp",
+    "date": "2025-06-04",
+    "start": "21:30",
+    "end": "22:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To Residence By Cities.",
+    "date": "2025-06-04",
+    "start": "22:15",
+    "end": "22:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lights Out Good Night Citizens",
+    "date": "2025-06-04",
+    "start": "22:30",
+    "end": "23:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Everybody Rise And Shine, Clean Up Cities,",
+    "date": "2025-06-05",
+    "start": "06:30",
+    "end": "07:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities, Flag Raising",
+    "date": "2025-06-05",
+    "start": "07:15",
+    "end": "07:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Breakfast",
+    "date": "2025-06-05",
+    "start": "07:30",
+    "end": "08:40",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities\u2014becky Sharp",
+    "date": "2025-06-05",
+    "start": "08:40",
+    "end": "08:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Address By Boys Nation Candidates",
+    "date": "2025-06-05",
+    "start": "08:45",
+    "end": "09:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To City Area, Legislature State And",
+    "date": "2025-06-05",
+    "start": "09:30",
+    "end": "11:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Polls Open By City \u2013 Boys Nation",
+    "date": "2025-06-05",
+    "start": "11:45",
+    "end": "12:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lunch - Polls Close\u2014 Boys Nation",
+    "date": "2025-06-05",
+    "start": "12:00",
+    "end": "12:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To City Area, Legislature, State And",
+    "date": "2025-06-05",
+    "start": "12:45",
+    "end": "13:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities\u2014\u2013becky Sharp",
+    "date": "2025-06-05",
+    "start": "13:45",
+    "end": "15:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "\u201choliday Declared\u201d Recreation For All",
+    "date": "2025-06-05",
+    "start": "15:00",
+    "end": "17:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return From Recreation",
+    "date": "2025-06-05",
+    "start": "17:00",
+    "end": "17:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities, Lowering Of Colors.",
+    "date": "2025-06-05",
+    "start": "17:30",
+    "end": "18:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Cities Meet In City Rooms",
+    "date": "2025-06-05",
+    "start": "18:15",
+    "end": "18:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Concert By Boys\u2019 State Band",
+    "date": "2025-06-05",
+    "start": "18:30",
+    "end": "19:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "General Assembly\u2014becky Sharp",
+    "date": "2025-06-05",
+    "start": "19:30",
+    "end": "20:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Law Enforsement Presentation",
+    "date": "2025-06-05",
+    "start": "20:15",
+    "end": "21:00",
+    "location": "TBD"
+  },
+  {
+    "summary": "Video Presentation Of 2022 Session",
+    "date": "2025-06-05",
+    "start": "21:00",
+    "end": "21:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Return To City Residence For R, R & R",
+    "date": "2025-06-05",
+    "start": "21:45",
+    "end": "22:45",
+    "location": "TBD"
+  },
+  {
+    "summary": "Lights Out\u2014 Good Night Citizens",
+    "date": "2025-06-05",
+    "start": "22:45",
+    "end": "23:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Everybody Rise And Shine",
+    "date": "2025-06-06",
+    "start": "06:30",
+    "end": "07:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Formation By Cities, Flag Raising",
+    "date": "2025-06-06",
+    "start": "07:15",
+    "end": "07:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Breakfast",
+    "date": "2025-06-06",
+    "start": "07:30",
+    "end": "08:15",
+    "location": "TBD"
+  },
+  {
+    "summary": "Evaluation Of 2025 Boys\u2019 State Session",
+    "date": "2025-06-06",
+    "start": "08:15",
+    "end": "08:30",
+    "location": "TBD"
+  },
+  {
+    "summary": "Clean Up Cities",
+    "date": "2025-06-06",
+    "start": "08:30",
+    "end": "09:00",
+    "location": "TBD"
+  }
+]
