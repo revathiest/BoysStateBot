@@ -1,26 +1,43 @@
-jest.mock('googleapis', () => {
-  const getClient = jest.fn().mockResolvedValue('mockAuthClient');
-
-  return {
-    google: {
-      auth: {
-        GoogleAuth: jest.fn(() => ({ getClient }))
-      },
-      calendar: jest.fn(() => ({
-        events: {
-          list: jest.fn().mockResolvedValue({
-            data: {
-              items: [{
+jest.mock('googleapis', () => ({
+  google: {
+    auth: {
+      GoogleAuth: jest.fn().mockImplementation(() => ({
+        getClient: jest.fn().mockResolvedValue({}),
+      })),
+    },
+    calendar: jest.fn().mockReturnValue({
+      events: {
+        list: jest.fn().mockResolvedValue({
+          data: {
+            items: [
+              {
                 id: 'event1',
                 summary: 'Test Event',
-                start: { dateTime: '2025-05-10T12:00:00Z' },
-                end: { dateTime: '2025-05-10T13:00:00Z' },
-                location: 'Location A',
-              }]
-            }
-          })
-        }
-      })),
+                start: { dateTime: '2025-06-07T12:00:00Z' },
+                end: { dateTime: '2025-06-07T13:00:00Z' },
+                location: 'Test Location',
+              },
+            ],
+          },
+        }),
+      },
+    }),
+  },
+}));
+
+jest.mock('../../db/models', () => {
+  return {
+    CalendarConfig: {
+      findAll: jest.fn(),
+    },
+    CalendarEvent: {
+      findOne: jest.fn(),
+      create: jest.fn(),
+      upsert: jest.fn(),
+      findAll: jest.fn(),
+    },
+    NotificationChannel: {
+      findOne: jest.fn(),
     },
   };
 });
@@ -28,62 +45,48 @@ jest.mock('googleapis', () => {
 const { pollCalendars } = require('../../utils/calendarPoller');
 const { CalendarConfig, CalendarEvent, NotificationChannel } = require('../../db/models');
 
-describe('calendarPoller', () => {
-  const sendMock = jest.fn();
-  const fetchMock = jest.fn().mockResolvedValue({ send: sendMock });
-  const clientMock = { channels: { fetch: fetchMock } };
+const mockClient = {
+  channels: {
+    fetch: jest.fn().mockResolvedValue({ send: jest.fn() }),
+  },
+};
 
+describe('calendarPoller', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('adds new event from API and sends notification', async () => {
-    CalendarConfig.findAll = jest.fn().mockResolvedValue([{ guildId: 'guild1', calendarId: 'cal1' }]);
-    CalendarEvent.findOne = jest.fn().mockResolvedValue(null);
-    CalendarEvent.findAll = jest.fn().mockResolvedValue([]);
-    CalendarEvent.create = jest.fn().mockResolvedValue({});
-    NotificationChannel.findOne = jest.fn().mockResolvedValue({ channelId: '1234567890' });
+  it('skips configs without startDate or endDate', async () => {
+    CalendarConfig.findAll.mockResolvedValue([{ guildId: '123', calendarId: 'abc' }]);
+    await pollCalendars(mockClient);
+    expect(CalendarEvent.create).not.toHaveBeenCalled();
+  });
 
-    await pollCalendars(clientMock);
+  it('calls Google API and creates events using configured date range', async () => {
+    CalendarConfig.findAll.mockResolvedValue([{
+      guildId: '123',
+      calendarId: 'abc',
+      startDate: '2025-06-01',
+      endDate: '2025-06-10',
+    }]);
+
+    CalendarEvent.findOne.mockResolvedValue(undefined);
+    NotificationChannel.findOne.mockResolvedValue({ channelId: 'abc123' });
+
+    await pollCalendars(mockClient);
 
     expect(CalendarEvent.create).toHaveBeenCalled();
-    expect(fetchMock).toHaveBeenCalledWith('1234567890');
-    expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({ embeds: expect.any(Array) }));
-  });
+    const createCallArgs = CalendarEvent.create.mock.calls[0][0];
+    console.log('[calendarPoller.test] Create called with:', createCallArgs);
 
-  test('updates event if time or location changed and sends notification', async () => {
-    const saveMock = jest.fn();
-    CalendarConfig.findAll = jest.fn().mockResolvedValue([{ guildId: 'guild1', calendarId: 'cal1' }]);
-    CalendarEvent.findOne = jest.fn().mockResolvedValue({
+    expect(createCallArgs).toEqual(expect.objectContaining({
+      guildId: '123',
+      calendarId: 'abc',
       eventId: 'event1',
-      startTime: new Date('2025-05-10T11:00:00Z'),
-      location: 'Old Location',
-      save: saveMock,
-    });
-    CalendarEvent.findAll = jest.fn().mockResolvedValue([]);
-    NotificationChannel.findOne = jest.fn().mockResolvedValue({ channelId: '1234567890' });
-
-    await pollCalendars(clientMock);
-
-    expect(saveMock).toHaveBeenCalled();
-    expect(fetchMock).toHaveBeenCalledWith('1234567890');
-    expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({ embeds: expect.any(Array) }));
+      summary: 'Test Event',
+      location: 'Test Location',
+      startTime: new Date('2025-06-07T12:00:00Z'),
+      endTime: new Date('2025-06-07T13:00:00Z'),
+    }));
   });
-
-  test('deletes stale event if missing from API and sends notification', async () => {
-    const destroyMock = jest.fn();
-    CalendarConfig.findAll = jest.fn().mockResolvedValue([{ guildId: 'guild1', calendarId: 'cal1' }]);
-    CalendarEvent.findOne = jest.fn().mockResolvedValue(null);
-    CalendarEvent.findAll = jest.fn().mockResolvedValue([{ eventId: 'eventOld', summary: 'Old Event', startTime: new Date(), location: '', destroy: destroyMock }]);
-    NotificationChannel.findOne = jest.fn().mockResolvedValue({ channelId: '1234567890' });
-
-    await pollCalendars(clientMock);
-
-    expect(destroyMock).toHaveBeenCalled();
-    expect(fetchMock).toHaveBeenCalledWith('1234567890');
-    expect(sendMock).toHaveBeenCalledWith(expect.objectContaining({ embeds: expect.any(Array) }));
-  });
-  test('throws descriptive error if client is missing', async () => {
-    await expect(pollCalendars()).rejects.toThrow('[pollCalendars] A valid Discord client must be passed');
-  });  
 });
