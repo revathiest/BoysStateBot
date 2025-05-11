@@ -7,6 +7,7 @@ const setChannelHandler = require('./calendar/set-channel');
 const listChannelsHandler = require('./calendar/list-channels');
 const removeChannelHandler = require('./calendar/remove-channel');
 const setDateRangeHandler = require('./calendar/set-daterange');
+const calendarLinkHandler = require('./calendar/link');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -67,6 +68,11 @@ module.exports = {
             .setDescription('End date (YYYY-MM-DD)')
             .setRequired(true)
         )
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('link')
+        .setDescription('Shows the editable calendar link.')
     ),
   async execute(interaction) {
     const sub = interaction.options.getSubcommand();
@@ -81,5 +87,6 @@ module.exports = {
     if (sub === 'list-channels') return listChannelsHandler(interaction, guildId);
     if (sub === 'remove-channel') return removeChannelHandler(interaction, guildId);
     if (sub === 'set-daterange') return setDateRangeHandler(interaction, guildId);
+    if (sub === 'link') return calendarLinkHandler(interaction, guildId);
   },
 };
