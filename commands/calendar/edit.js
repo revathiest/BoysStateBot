@@ -2,7 +2,6 @@ const CalendarConfig = require('../../db/models/CalendarConfig');
 const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRow } = require('discord.js');
 
 module.exports = async function edit(interaction, guildId) {
-  console.log('[calendar:edit] Triggered edit subcommand.');
 
   const configs = await CalendarConfig.findAll({ where: { guildId } });
 

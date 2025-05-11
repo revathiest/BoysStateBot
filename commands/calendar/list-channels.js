@@ -1,7 +1,6 @@
 const NotificationChannels = require('../../db/models').NotificationChannels;
 
 module.exports = async function listChannels(interaction, guildId) {
-  console.log('[calendar:list-channels] Listing notification channels...');
 
   try {
     const configs = await NotificationChannels.findAll({ where: { guildId } });

@@ -1,7 +1,6 @@
 const CalendarConfig = require('../../db/models/CalendarConfig');
 
 module.exports = async function list(interaction, guildId) {
-  console.log('[calendar:list] Listing calendars...');
 
   try {
     const configs = await CalendarConfig.findAll({ where: { guildId } });

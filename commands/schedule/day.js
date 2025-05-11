@@ -29,12 +29,8 @@ module.exports = async function day(interaction, guildId) {
     const endParts = config.endDate.split('-');
     const endDate = new Date(endParts[0], endParts[1] - 1, endParts[2]);
 
-    console.log(`[schedule:day] Configured startDate (local): ${startDate.toDateString()}, endDate (local): ${endDate.toDateString()}`);
-
     const anchorSunday = new Date(startDate);
     anchorSunday.setDate(startDate.getDate() - startDate.getDay());
-
-    console.log(`[schedule:day] Anchor Sunday calculated as: ${anchorSunday.toDateString()}`);
 
     const dayIndex = {
       sunday: 0,
@@ -62,7 +58,6 @@ module.exports = async function day(interaction, guildId) {
 
     const targetDate = new Date(anchorSunday);
     targetDate.setDate(anchorSunday.getDate() + dayIndex);
-    console.log(`[schedule:day] Target date for "${inputDay}": ${targetDate.toDateString()}`);
 
     if (targetDate < startDate || targetDate > endDate) {
       console.warn(`[schedule:day] Target date ${targetDate.toDateString()} is outside configured range.`);
@@ -92,19 +87,15 @@ module.exports = async function day(interaction, guildId) {
       23, 59, 59, 999
     ));
 
-    console.log(`[schedule:day] Querying UTC window: ${startOfDayUTC.toISOString()} → ${endOfDayUTC.toISOString()}`);
-
     const events = await CalendarEvent.findAll({
       where: {
         guildId,
         startTime: { [Op.between]: [startOfDayUTC, endOfDayUTC] },
       },
       order: [['startTime', 'ASC']],
-      logging: (sql) => console.log(`[schedule:day] Executed SQL: ${sql}`),
     });
 
     if (!events.length) {
-      console.log(`[schedule:day] No events found for ${inputDay}.`);
       return interaction.reply({
         embeds: [
           buildScheduleEmbed(
@@ -115,11 +106,6 @@ module.exports = async function day(interaction, guildId) {
         ],
         flags: MessageFlags.Ephemeral,
       });
-    }
-
-    console.log(`[schedule:day] Found ${events.length} event(s) for ${inputDay}:`);
-    for (const evt of events) {
-      console.log(` → ${evt.startTime}`);
     }
 
     const list = formatScheduleList(events);

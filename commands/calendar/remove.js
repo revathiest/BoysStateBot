@@ -2,7 +2,6 @@ const CalendarConfig = require('../../db/models/CalendarConfig');
 const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js');
 
 module.exports = async function remove(interaction, guildId) {
-  console.log('[calendar:remove] Triggered remove subcommand.');
 
   const configs = await CalendarConfig.findAll({ where: { guildId } });
 

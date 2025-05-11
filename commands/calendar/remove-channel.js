@@ -1,7 +1,6 @@
 const NotificationChannels = require('../../db/models').NotificationChannels;
 
 module.exports = async function removeChannel(interaction, guildId) {
-  console.log('[calendar:remove-channel] Removing notification channel...');
 
   try {
     const channelId = interaction.options.getString('channel_id');

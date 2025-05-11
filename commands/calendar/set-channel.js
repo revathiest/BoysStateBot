@@ -1,7 +1,6 @@
 const NotificationChannel = require('../../db/models/NotificationChannel');
 
 module.exports = async function setChannel(interaction, guildId) {
-  console.log('[calendar:set-channel] Setting notification channel...');
 
   if (!interaction.member.permissions.has('Administrator')) {
     return await interaction.reply({
