@@ -65,9 +65,15 @@ async function pollCalendars(client) {
     const { guildId, calendarId } = config;
 
     try {
-      const now = new Date();
-      const timeMin = new Date(now.getTime() - (10 * 24 * 60 * 60 * 1000));
-      const timeMax = new Date(now.getTime() + (10 * 24 * 60 * 60 * 1000));
+      if (!config.startDate || !config.endDate) {
+        continue;
+      }
+      
+      const [sy, sm, sd] = config.startDate.split('-');
+      const [ey, em, ed] = config.endDate.split('-');
+      
+      const timeMin = new Date(Date.UTC(sy, sm - 1, sd, 0, 0, 0));
+      const timeMax = new Date(Date.UTC(ey, em - 1, ed, 23, 59, 59, 999));    
 
       const res = await calendarClient.events.list({
         calendarId,

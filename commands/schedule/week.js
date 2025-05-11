@@ -8,7 +8,7 @@ module.exports = async function week(interaction) {
       new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId('schedule_week_confirm_blah')
-          .setLabel('Yes, show me the schedule')
+          .setLabel('Yes, show me the Schedule')
           .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
           .setCustomId('schedule_week_cancel_blah')

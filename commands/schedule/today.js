@@ -1,40 +1,39 @@
-const CalendarEvent = require('../../db/models').CalendarEvent;
+const { CalendarConfig, CalendarEvent } = require('../../db/models');
 const { Op } = require('sequelize');
 const formatScheduleList = require('../../utils/scheduleFormatter');
 const buildScheduleEmbed = require('../../utils/scheduleEmbedBuilder');
-const { MessageFlags } = require('discord.js');
+const { MessageFlags } = require('discord-api-types/v10');
 
 module.exports = async function today(interaction, guildId) {
   try {
-    const now = new Date();
-    const startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
+    const config = await CalendarConfig.findOne({ where: { guildId } });
+    if (!config || !config.startDate || !config.endDate) {
+      return interaction.reply({
+        embeds: [buildScheduleEmbed('⚠️ Calendar Range Not Configured', 'Configure a calendar date range first.', 0xFFAA00)],
+        flags: MessageFlags.Ephemeral,
+      });
+    }
 
-    const endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
+    const now = new Date();
+    const todayUTCStart = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
+    const todayUTCEnd = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999));
 
     const events = await CalendarEvent.findAll({
       where: {
         guildId,
-        startTime: { [Op.between]: [startOfDay, endOfDay] },
+        startTime: { [Op.between]: [todayUTCStart, todayUTCEnd] },
       },
       order: [['startTime', 'ASC']],
     });
 
     if (!events.length) {
-      return await interaction.reply({
-        embeds: [{
-          title: '<:newmexicoflag:1370750476332564520> Today’s Schedule',
-          description: 'No events scheduled for today.',
-          color: 0xCCCCCC,
-          footer: { text: 'New Mexico Boys & Girls State' },
-        }],
+      return interaction.reply({
+        embeds: [buildScheduleEmbed("Today's Schedule", 'No events scheduled for today.', 0xCCCCCC)],
         flags: MessageFlags.Ephemeral,
       });
     }
 
     const list = formatScheduleList(events);
-
     await interaction.reply({
       embeds: [buildScheduleEmbed(`Today's Schedule`, list)], 
       flags: MessageFlags.Ephemeral,
