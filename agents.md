@@ -1,117 +1,122 @@
-# AGENTS.md
+# NMBS Discord Bot Development Guidelines
 
-This document outlines contributor and AI agent standards for maintaining and extending the **NMBS Discord Bot** project. These guidelines are mandatory for all code contributions, automation tasks, and test implementations across the repository.
+## Purpose & Scope
 
----
+Defines best practices and development standards for contributors to the New Mexico Boys State Discord Bot.
 
-## ⚙️ Repo Standards
+## Coding Standards
 
-### Language & Design
+* Use **ESLint** (Airbnb or equivalent).
+* Prefer `const` unless reassignment is required.
+* Use `async/await` exclusively.
+* Write modular, reusable code.
+* Document exported functions and key logic thoroughly.
+* Follow linting rules and minimise complexity.
+* Use dependency injection for testability.
+* Maintain separation between Discord I/O, DB logic, and utilities.
 
-* Use **JavaScript (Node.js)** with CommonJS or ESM as appropriate.
-* Prioritise **modular design** — one logical function per file, keep it clean and decoupled.
-* Use **Sequelize ORM** for all DB interactions — no raw SQL, ever.
-* All Discord integration must leverage the **Discord.js v14 Slash Command Interaction API**.
+## Command Design
 
-### Command Structure
+* Use `SlashCommandBuilder` (Discord.js v14).
+* Export `data` and `execute` in each command file.
+* Organise commands in logical folders.
+* Use ephemeral replies for admin/user-specific commands.
+* Prefer **Embeds** for responses.
 
-* All commands live in the `commands/` directory.
-* Organise them by category (e.g. `admin`, `city`, `elections`) for clarity only.
-* Each `.js` file defines a complete top-level slash command.
-* For multi-part commands like `/election start` or `/election status`, break logic into subcommand files within a subfolder, and register them in the main command file using `.addSubcommand(...)`.
+## Database Use
 
-**Structure Example:**
+* Use **Sequelize ORM** only.
+* Define models clearly with types, constraints, defaults.
+* Wrap DB logic in `try/catch` with clear error logs.
+* Validate inputs both in Sequelize and commands.
 
-```
-commands/
-├── user/
-│   ├── verify.js           => /verify
-│   └── whois.js            => /whois
-├── election/
-│   ├── election.js         => /election (aggregates subcommands)
-│   └── election/
-│       ├── start.js        => defines `start` subcommand logic
-│       └── status.js       => defines `status` subcommand logic
-```
+## Testing Protocols
 
-**Command File Structure:**
+* Use **Jest** with high-fidelity mocks (Discord.js).
+* Include test files for each command/module.
+* Cover all logical branches.
+* Ensure test stability with state resets.
+* Use `beforeEach`/`afterEach` to clean mocks.
 
-```js
-module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('commandName')
-    .setDescription('Command description'),
-  async execute(interaction) {
-    // Command logic goes here
-  },
-};
-```
+## Git & Repo Hygiene
+
+* Name branches: `feature/`, `fix/`, `test/`, etc.
+* Peer review all PRs.
+* Include a summary, evidence, and relevant screenshots.
+* Use clear, conventional commit messages.
+
+## Bot Behaviour Expectations
+
+* Don’t alter nicknames unless necessary.
+* Enforce rules immediately — no delays.
+* Preserve name structure/casing.
+* Log moderation actions with full context.
+
+## Deployment Practices
+
+* Deploy via GitHub Actions.
+* Tag releases semantically (e.g., `v1.2.3`).
+* Require passing tests and one approval before production.
 
 ---
 
 ## ✅ Pull Request Checklist
 
-* [ ] Latest from `origin/main` or `origin/dev` merged with no conflicts.
-* [ ] Unit tests cover all new logic, including failure paths.
-* [ ] Input validation is mocked and asserted.
-* [ ] All tests pass (`npm test` is green).
-* [ ] `CHANGELOG.md` updated unless change is trivial/internal.
-* [ ] Branch name uses correct prefix: `feat/`, `fix/`, `refactor/`, `test/`.
-* [ ] Commits are concise, descriptive, and reference any issues.
-* [ ] Code is clean, modular, documented — and no console logs.
-* [ ] Mocks properly scoped with `beforeEach`/`afterEach`.
+* [ ] Merged latest changes from `origin/development` or `origin/master`.
+* [ ] Unit tests cover all new logic, including edge cases and failures.
+* [ ] Mocks validate input/output (`toHaveBeenCalledWith`, etc.).
+* [ ] All tests pass (`npm test`).
+* [ ] `CHANGELOG.md` updated (unless trivial/internal).
+* [ ] Branch name uses correct prefix.
+* [ ] Commits are concise, descriptive, and issue-linked.
+* [ ] Code is clean, documented, and free of `console.log`.
 
 ---
 
 ## 📁 Test Coverage Requirements
 
-### Unit Testing
+### Coverage Goals
 
-Each module **must** include tests that:
+* Target **70–80% overall line coverage**.
+* Require **80–90%** in core modules (e.g., auth, payments).
+* Accept **60–70%** in low-risk or legacy code.
 
-* Cover success, failure, and edge cases.
-* Validate function parameters.
-* Assert Sequelize interactions with `toHaveBeenCalledWith(expect.objectContaining(...))`.
-* Simulate external service failure and confirm graceful fallback.
-* Confirm side effects: e.g. role assignment, embed messages, database updates.
-* Avoid noise — no meaningless tests just to hit coverage numbers.
+### Principles
 
-### AI Agent Test Tasking
+1. Focus on business-critical/security-sensitive code.
+2. Use branch and condition coverage for logic-heavy parts.
+3. Rely on code reviews to catch weak/missing tests.
+4. Generate coverage reports but don’t gate PRs solely on coverage %.
 
-* Review all `*.test.js` and `__tests__/` content.
+### Expectations
 
-* Watch for:
+* Tests must:
 
-  * Weak assertions (like `toHaveBeenCalled()` with no args).
-  * Missing negative case coverage.
-  * Untested mocks or outputs.
+  * Cover success, failure, edge cases.
+  * Validate parameters and DB interactions.
+  * Handle external service/data failures.
+  * Confirm side effects (roles, messages, writes).
+  * Avoid redundant/trivial tests.
 
-* Refactor to:
+* Codex Agents:
 
-  * Improve assertions — validate arguments and outputs.
-  * Test conditional logic and error paths using `mockRejectedValueOnce()`.
-  * Validate unexpected or invalid inputs.
-  * Remove dead/duplicate tests.
+  * Review all `__tests__/` and `*.test.js` files.
+  * Fill coverage gaps where valuable.
+  * Flag weak assertions, unvalidated mocks, missing branches.
+  * Refactor with deeper checks, failure simulations, edge handling.
 
 ---
 
 ## 🚫 Prohibited Patterns
 
-* Tests that don’t assert logic.
-* Mocked functions that return truthy with no verification.
-* Duplicate test paths.
-* Raw SQL queries.
-* Console logging in non-debug code.
+* Tests without behavioural validation.
+* Always-true mocks with no input checks.
+* Duplicated tests.
+* Raw SQL.
+* Noisy or unscoped logging.
 
 ---
 
-## 🧵 Code Hygiene
+Keep it clean, clear, and reliable. If you're unsure, speak up — better to ask than to assume.
 
-* Adhere to linting rules — format like a professional, not a pirate.
-* Don’t be clever for clever’s sake — keep logic lean.
-* Use dependency injection for clean testing.
-* Keep Discord logic, DB logic, and utilities clearly separated.
-
----
-
-This file is your gospel if you're contributing to the NMBS Discord Bot. No mess, no shortcuts — just clean code and top-tier bot behaviour.
+Onward, coders. Keep this bot razor-sharp.
