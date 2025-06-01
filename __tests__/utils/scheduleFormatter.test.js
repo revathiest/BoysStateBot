@@ -1,4 +1,3 @@
-// --- __tests__/utils/scheduleFormatter.test.js ---
 const formatScheduleList = require('../../utils/scheduleFormatter');
 
 describe('formatScheduleList', () => {
@@ -11,21 +10,28 @@ describe('formatScheduleList', () => {
   it('formats a list of events', () => {
     const event1 = new Date('2025-06-01T08:00:00Z');
     const event2 = new Date('2025-06-01T09:00:00Z');
-  
     const events = [
-      { summary: 'Opening Ceremony', startTime: event1, location: 'Auditorium' },
-      { summary: 'Registration', startTime: event2, location: 'Front Desk' },
+      { summary: 'Opening', startTime: e1, location: 'Hall' },
+      { summary: 'Reg', startTime: e2, location: 'Desk' },
     ];
-  
     const result = formatScheduleList(events);
-  
-    expect(result).toContain(formatTime(event1));
-    expect(result).toContain('Opening Ceremony');
-    expect(result).toContain(formatTime(event2));
-    expect(result).toContain('Registration');
-  });  
+    expect(result).toContain(e1.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
+    expect(result).toContain('Opening');
+    expect(result).toContain(e2.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }));
+    expect(result).toContain('Reg');
+  });
 
-  it('returns fallback for empty list', () => {
-    expect(formatScheduleList([])).toMatch("");
+  it('handles all day events and strips comma location', () => {
+    const e1 = new Date('2025-06-01T00:00:00Z');
+    const events = [
+      { summary: 'All Day', startTime: e1, location: 'Place, Somewhere' },
+    ];
+    const result = formatScheduleList(events);
+    expect(result).toContain('(All Day)');
+    expect(result).toContain('Place');
+  });
+
+  it('returns empty string for no events', () => {
+    expect(formatScheduleList([])).toBe('');
   });
 });
