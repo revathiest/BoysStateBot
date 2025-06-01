@@ -19,9 +19,9 @@ module.exports = function formatScheduleList(events) {
   return events
     .map((ev) => {
       const isAllDay =
-        ev.startTime.getHours() === 0 &&
-        ev.startTime.getMinutes() === 0 &&
-        ev.startTime.getSeconds() === 0;
+        ev.startTime.getUTCHours() === 0 &&
+        ev.startTime.getUTCMinutes() === 0 &&
+        ev.startTime.getUTCSeconds() === 0;
       const location = ev.location
         ? ev.location.includes(',')
           ? ev.location.split(',')[0].trim()

@@ -35,4 +35,20 @@ describe('formatScheduleList', () => {
     expect(result).toContain('Dinner');
     expect(result).not.toContain('@');
   });
+
+  it('detects all-day events using UTC time', () => {
+    const fakeDate = {
+      getUTCHours: () => 0,
+      getUTCMinutes: () => 0,
+      getUTCSeconds: () => 0,
+      getHours: () => 17,
+      getMinutes: () => 0,
+      getSeconds: () => 0,
+      toLocaleTimeString: () => '05:00 PM',
+    };
+
+    const events = [{ summary: 'Meeting', startTime: fakeDate }];
+    const result = formatScheduleList(events);
+    expect(result).toContain('(All Day)');
+  });
 });
