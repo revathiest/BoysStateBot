@@ -71,6 +71,7 @@ const EmbedBuilder = jest.fn().mockImplementation(() => {
   return embed;
 });
 
+EmbedBuilder.from = jest.fn(() => new EmbedBuilder());
 const PermissionFlagsBits = {
   Administrator: 0x00000008,
   ManageGuild: 0x00000020,

@@ -45,6 +45,7 @@ jest.mock('../../db/models', () => {
 const { pollCalendars } = require('../../utils/calendarPoller');
 const { CalendarConfig, CalendarEvent, NotificationChannel } = require('../../db/models');
 
+const { google } = require('googleapis');
 const mockClient = {
   channels: {
     fetch: jest.fn().mockResolvedValue({ send: jest.fn() }),
@@ -88,5 +89,46 @@ describe('calendarPoller', () => {
       startTime: new Date('2025-06-07T12:00:00Z'),
       endTime: new Date('2025-06-07T13:00:00Z'),
     }));
+  });
+
+  it('throws if client is invalid', async () => {
+    await expect(pollCalendars({})).rejects.toThrow('pollCalendars');
+  });
+
+  it('updates existing events when changed', async () => {
+    CalendarConfig.findAll.mockResolvedValue([{ guildId: '1', calendarId: 'cal', startDate: '2025-06-01', endDate: '2025-06-10' }]);
+    const save = jest.fn();
+    CalendarEvent.findOne.mockResolvedValue({
+      startTime: new Date('2025-06-07T10:00:00Z'),
+      endTime: new Date('2025-06-07T11:00:00Z'),
+      location: 'Old Location',
+      summary: 'Old',
+      save
+    });
+    NotificationChannel.findOne.mockResolvedValue({ channelId: 'chan' });
+    const send = jest.fn();
+    mockClient.channels.fetch.mockResolvedValue({ send });
+    CalendarEvent.findAll.mockResolvedValue([]);
+
+    await pollCalendars(mockClient);
+
+    expect(save).toHaveBeenCalled();
+    expect(send).toHaveBeenCalled();
+    expect(CalendarEvent.create).not.toHaveBeenCalled();
+  });
+
+  it('removes stale events and notifies', async () => {
+    CalendarConfig.findAll.mockResolvedValue([{ guildId: '1', calendarId: 'cal', startDate: '2025-06-01', endDate: '2025-06-10' }]);
+    CalendarEvent.findOne.mockResolvedValue(undefined);
+    const staleDestroy = jest.fn();
+    CalendarEvent.findAll.mockResolvedValue([{ destroy: staleDestroy, summary: 'Gone', startTime: new Date('2025-06-05T12:00:00Z'), location: 'There' }]);
+    NotificationChannel.findOne.mockResolvedValue({ channelId: 'chan' });
+    const send = jest.fn();
+    mockClient.channels.fetch.mockResolvedValue({ send });
+
+    await pollCalendars(mockClient);
+
+    expect(staleDestroy).toHaveBeenCalled();
+    expect(send).toHaveBeenCalled();
   });
 });
