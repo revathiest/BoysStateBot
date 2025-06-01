@@ -3,7 +3,7 @@ const path = require('path');
 
 describe('Repository documentation', () => {
   const repoRoot = path.join(__dirname, '..');
-  const excluded = new Set(['node_modules', '.git', 'coverage']);
+  const excluded = new Set(['node_modules', '.git', 'coverage', '.vscode']);
 
   const getDirectories = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
