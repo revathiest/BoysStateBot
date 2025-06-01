@@ -34,9 +34,10 @@ module.exports = function formatScheduleList(events) {
         return `🗓 **(All Day)** ${summary}${location ? ` @ ${location}` : ''}`;
       }
 
-      const time = ev.startTime.toLocaleTimeString(undefined, {
+      const time = ev.startTime.toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
+        timeZone: 'America/Denver',
       });
 
       return `🕒 **${time}** ${summary}${location ? ` @ ${location}` : ''}`;
