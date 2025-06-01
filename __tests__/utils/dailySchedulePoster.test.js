@@ -58,4 +58,18 @@ describe('dailySchedulePoster', () => {
     await postScheduleForToday(client, 'g');
     expect(edit).toHaveBeenCalled();
   });
+
+  test('calculates Mountain day bounds correctly', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2025-06-01T12:00:00Z'));
+    ScheduleChannel.findOne.mockResolvedValue({ guildId: 'g', channelId: '1', save: jest.fn() });
+    CalendarEvent.findAll.mockResolvedValue([]);
+    const client = { channels: { fetch: jest.fn().mockResolvedValue(mockChannel()) } };
+    await postScheduleForToday(client, 'g');
+    const where = CalendarEvent.findAll.mock.calls[0][0].where;
+    const { Op } = require('sequelize');
+    const [start, end] = where.startTime[Op.between];
+    expect(start.toISOString()).toBe('2025-06-01T06:00:00.000Z');
+    expect(end.toISOString()).toBe('2025-06-02T05:59:59.999Z');
+    jest.useRealTimers();
+  });
 });

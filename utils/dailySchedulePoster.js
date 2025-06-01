@@ -8,6 +8,26 @@ function getTimezoneOffset(zone, date = new Date()) {
   return date.getTime() - local.getTime();
 }
 
+function parseDateInZone(dateStr, zone) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const utc = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+  const offset = getTimezoneOffset(zone, utc);
+  return new Date(utc.getTime() + offset);
+}
+
+function getMountainDayBounds(date = new Date()) {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Denver',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const dayStr = formatter.format(date);
+  const startUtc = parseDateInZone(dayStr, 'America/Denver');
+  const endUtc = new Date(startUtc.getTime() + 24 * 60 * 60 * 1000 - 1);
+  return { startUtc, endUtc };
+}
+
 function isTodayMountain(date) {
   const fmt = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/Denver',
@@ -24,10 +44,7 @@ async function postScheduleForToday(client, guildId) {
   const channel = await client.channels.fetch(config.channelId).catch(() => null);
   if (!channel) return;
 
-  const offset = getTimezoneOffset('America/Denver');
-  const nowMt = new Date(Date.now() - offset);
-  const startUtc = new Date(Date.UTC(nowMt.getFullYear(), nowMt.getMonth(), nowMt.getDate(), 0, 0, 0));
-  const endUtc = new Date(Date.UTC(nowMt.getFullYear(), nowMt.getMonth(), nowMt.getDate(), 23, 59, 59, 999));
+  const { startUtc, endUtc } = getMountainDayBounds();
 
   const events = await CalendarEvent.findAll({
     where: { guildId, startTime: { [Op.between]: [startUtc, endUtc] } },
@@ -52,12 +69,12 @@ async function postScheduleForToday(client, guildId) {
 function scheduleDailyTask(client) {
   async function scheduleNext() {
     const now = new Date();
-    const offset = getTimezoneOffset('America/Denver', now);
-    const mtNow = new Date(now.getTime() - offset);
-    let mtNext = new Date(mtNow);
-    mtNext.setHours(4, 0, 0, 0);
-    if (mtNow >= mtNext) mtNext.setDate(mtNext.getDate() + 1);
-    const nextUtc = new Date(mtNext.getTime() + offset);
+    const { startUtc } = getMountainDayBounds(now);
+    const fourAm = new Date(startUtc.getTime() + 4 * 60 * 60 * 1000);
+    let nextUtc = fourAm;
+    if (now >= fourAm) {
+      nextUtc = new Date(startUtc.getTime() + 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000);
+    }
     const delay = nextUtc.getTime() - now.getTime();
     setTimeout(async () => {
       const guilds = await ScheduleChannel.findAll();
