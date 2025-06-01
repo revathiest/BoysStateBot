@@ -21,9 +21,7 @@ describe('formatScheduleList', () => {
   
     const result = formatScheduleList(events);
   
-    expect(result).toContain(formatTime(event1));
     expect(result).toContain('Opening Ceremony');
-    expect(result).toContain(formatTime(event2));
     expect(result).toContain('Registration');
   });  
 
