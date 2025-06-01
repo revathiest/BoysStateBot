@@ -9,12 +9,13 @@ function getTimezoneOffset(zone, date = new Date()) {
 }
 
 function isTodayMountain(date) {
-  const offset = getTimezoneOffset('America/Denver');
-  const nowMt = new Date(Date.now() - offset);
-  const dateMt = new Date(date.getTime() - offset);
-  return nowMt.getFullYear() === dateMt.getFullYear() &&
-    nowMt.getMonth() === dateMt.getMonth() &&
-    nowMt.getDate() === dateMt.getDate();
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Denver',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+  return fmt.format(date) === fmt.format(new Date());
 }
 
 async function postScheduleForToday(client, guildId) {
