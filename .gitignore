@@ -8,6 +8,7 @@ google-credentials.json
 
 # Dependency and build artifacts
 node_modules/
+coverage/
 *.zip
 bot.log
 *.log
