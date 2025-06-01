@@ -51,4 +51,11 @@ describe('formatScheduleList', () => {
     const result = formatScheduleList(events);
     expect(result).toContain('(All Day)');
   });
+
+  it('formats times in Mountain Time', () => {
+    const start = new Date('2025-06-01T16:00:00Z');
+    const events = [{ summary: 'Meeting', startTime: start }];
+    const result = formatScheduleList(events);
+    expect(result).toContain('10:00 AM');
+  });
 });
