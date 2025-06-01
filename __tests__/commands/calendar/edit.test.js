@@ -4,7 +4,18 @@ jest.mock('../../../db/models/CalendarConfig', () => {
 });
 
 jest.mock('discord.js', () => {
-  class Fake { setCustomId(){return this;} setTitle(){return this;} addComponents(){return this;} setLabel(){return this;} setStyle(){return this;} setRequired(){return this;} setPlaceholder(){return this;} addOptions(){return this;} }
+  class Fake {
+    setCustomId(){return this;}
+    setTitle(){return this;}
+    addComponents(){return this;}
+    setLabel(){return this;}
+    setStyle(){return this;}
+    setRequired(){return this;}
+    setPlaceholder(){return this;}
+    addOptions(){return this;}
+    setValue(){return this;}
+    setDescription(){return this;}
+  }
   return { ModalBuilder: Fake, TextInputBuilder: Fake, TextInputStyle: { Short: 1 }, ActionRowBuilder: Fake, StringSelectMenuBuilder: Fake, StringSelectMenuOptionBuilder: Fake };
 });
 
@@ -27,5 +38,17 @@ describe('calendar edit', () => {
     const showModal = jest.fn();
     await edit({ showModal }, 'g1');
     expect(showModal).toHaveBeenCalled();
+  });
+
+  test('presents select when multiple calendars', async () => {
+    findAll.mockResolvedValue([
+      { id: 1, label: 'a', calendarId: 'c1' },
+      { id: 2, label: 'b', calendarId: 'c2' }
+    ]);
+    const reply = jest.fn();
+    await edit({ reply }, 'g1');
+    expect(reply).toHaveBeenCalledWith(
+      expect.objectContaining({ ephemeral: true, components: expect.any(Array) })
+    );
   });
 });
