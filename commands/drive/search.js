@@ -3,6 +3,7 @@ const driveAuth = require('../../utils/googleDrive');
 
 module.exports = async function search(interaction) {
   const name = interaction.options.getString('name');
+  await interaction.deferReply({ ephemeral: true });
   try {
     const auth = await driveAuth.getClient();
     const drive = google.drive({ version: 'v3', auth });
@@ -13,16 +14,15 @@ module.exports = async function search(interaction) {
     });
     const file = (listRes.data.files || [])[0];
     if (!file) {
-      return interaction.reply({ content: `❌ No file named **${name}** found.`, ephemeral: true });
+      return interaction.editReply({ content: `❌ No file named **${name}** found.` });
     }
     const fileRes = await drive.files.get({ fileId: file.id, alt: 'media' }, { responseType: 'arraybuffer' });
-    return interaction.reply({
+    return interaction.editReply({
       content: `📂 Found **${file.name}**`,
       files: [{ attachment: Buffer.from(fileRes.data), name: file.name }],
-      ephemeral: true,
     });
   } catch (err) {
     console.error('[drive:search] Error searching file:', err);
-    return interaction.reply({ content: '❌ Error searching Google Drive.', ephemeral: true });
+    return interaction.editReply({ content: '❌ Error searching Google Drive.' });
   }
 };
