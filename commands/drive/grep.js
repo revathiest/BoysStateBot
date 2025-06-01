@@ -1,4 +1,5 @@
 const { google } = require('googleapis');
+const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const driveAuth = require('../../utils/googleDrive');
 
 module.exports = async function grep(interaction) {
@@ -23,10 +24,18 @@ module.exports = async function grep(interaction) {
     if (!files.length) {
       return interaction.editReply({ content: `❌ No files contain **${query}**.` });
     }
-    const list = files
-      .map(f => `• [${f.name}](https://drive.google.com/uc?id=${f.id}&export=download)`) 
-      .join('\n');
-    return interaction.editReply({ content: `📄 Files containing **${query}**:\n${list}` });
+
+    const menu = new StringSelectMenuBuilder()
+      .setCustomId(`drive_grep_select_${interaction.user.id}`)
+      .setPlaceholder('Select a file to download')
+      .addOptions(files.map(f => ({ label: f.name, value: f.id })));
+
+    const row = new ActionRowBuilder().addComponents(menu);
+
+    return interaction.editReply({
+      content: `📄 Select a file containing **${query}**:`,
+      components: [row],
+    });
   } catch (err) {
     console.error('[drive:grep] Error searching contents:', err);
     return interaction.editReply({ content: '❌ Error searching Google Drive.' });
