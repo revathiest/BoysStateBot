@@ -47,6 +47,21 @@ describe('drive grep', () => {
     expect(StringSelectMenuBuilder.mock.instances[0].data.customId).toBe('drive_grep_select_u1');
   });
 
+  test('deduplicates files with same id', async () => {
+    driveAuthMock.getClient.mockResolvedValue({});
+    gMock.listMock.mockResolvedValue({ data: { files: [
+      { id: '1', name: 'a.txt' },
+      { id: '1', name: 'copy of a.txt' },
+      { id: '2', name: 'b.txt' },
+    ] } });
+    const deferReply = jest.fn();
+    const editReply = jest.fn();
+    const options = { getString: jest.fn(() => 'foo') };
+    const user = { id: 'u2' };
+    await grep({ options, deferReply, editReply, user });
+    expect(StringSelectMenuBuilder.mock.instances[0].data.options).toHaveLength(2);
+  });
+
   test('paginates through results', async () => {
     driveAuthMock.getClient.mockResolvedValue({});
     gMock.listMock
