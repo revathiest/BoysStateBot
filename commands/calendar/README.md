@@ -8,6 +8,7 @@ Each file implements a subcommand for managing Google Calendar integration:
 - `edit.js` → `/calendar edit`
 - `remove.js` → `/calendar remove`
 - `list.js` → `/calendar list`
+- `toggle-notifications.js` → `/calendar toggle-notifications`
 
 All subcommands are built using Discord.js v14's SlashCommandBuilder.
 

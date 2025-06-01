@@ -12,6 +12,12 @@ const NotificationChannel = sequelize.define('NotificationChannel', {
     allowNull: false,
     comment: 'Channel ID to send notifications to',
   },
+  enabled: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+    comment: 'Whether calendar notifications are enabled',
+  },
 }, {
   tableName: 'notification_channels',
   timestamps: false,
