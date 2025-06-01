@@ -25,4 +25,31 @@ describe('calendar set-daterange', () => {
     expect(update).toHaveBeenCalled();
     expect(reply).toHaveBeenCalled();
   });
+
+  test('invalid date values', async () => {
+    const reply = jest.fn();
+    const options = { getString: jest.fn(key => key === 'start' ? '2023-99-99' : '2023-01-01') };
+    await handler({ options, reply }, 'g');
+    expect(reply).toHaveBeenCalled();
+  });
+
+  test('start after end', async () => {
+    const reply = jest.fn();
+    const options = { getString: jest.fn(key => key === 'start' ? '2023-01-02' : '2023-01-01') };
+    await handler({ options, reply }, 'g');
+    expect(reply).toHaveBeenCalled();
+  });
+
+  test('multiple calendars shows select', async () => {
+    findAll.mockResolvedValue([
+      { calendarId: 'a', label: 'A' },
+      { calendarId: 'b', label: 'B' }
+    ]);
+    const reply = jest.fn();
+    const options = { getString: jest.fn(key => key === 'start' ? '2023-01-01' : '2023-01-02') };
+    await handler({ options, reply }, 'g');
+    expect(reply).toHaveBeenCalledWith(
+      expect.objectContaining({ ephemeral: true, components: expect.any(Array) })
+    );
+  });
 });

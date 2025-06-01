@@ -24,4 +24,19 @@ describe('calendar list-channels', () => {
     await list({ guild, reply }, 'g');
     expect(reply).toHaveBeenCalled();
   });
+
+  test('unknown channel handled', async () => {
+    findAll.mockResolvedValue([{ channelId: '1' }]);
+    const reply = jest.fn();
+    const guild = { channels: { cache: new Map() } };
+    await list({ guild, reply }, 'g');
+    expect(reply).toHaveBeenCalled();
+  });
+
+  test('errors are caught', async () => {
+    findAll.mockRejectedValue(new Error('fail'));
+    const reply = jest.fn();
+    await list({ reply }, 'g');
+    expect(reply).toHaveBeenCalled();
+  });
 });

@@ -22,4 +22,12 @@ describe('calendar remove-channel', () => {
     await handler({ options, reply }, 'g');
     expect(reply).toHaveBeenCalled();
   });
+
+  test('handles errors', async () => {
+    destroy.mockRejectedValue(new Error('fail'));
+    const reply = jest.fn();
+    const options = { getString: jest.fn(() => '1') };
+    await handler({ options, reply }, 'g');
+    expect(reply).toHaveBeenCalled();
+  });
 });
