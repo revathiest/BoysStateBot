@@ -2,10 +2,10 @@ const formatScheduleList = require('../../utils/scheduleFormatter');
 
 describe('formatScheduleList', () => {
     const formatTime = (date) =>
-    date.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+      date.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
   
   it('formats a list of events', () => {
     const event1 = new Date('2025-06-01T08:00:00Z');
