@@ -15,6 +15,7 @@ jest.mock('googleapis', () => {
 const { __mock: driveAuthMock } = require('../../../utils/googleDrive');
 const { __mock: gMock } = require('googleapis');
 const grep = require('../../../commands/drive/grep');
+const { StringSelectMenuBuilder } = require('discord.js');
 
 describe('drive grep', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -25,20 +26,25 @@ describe('drive grep', () => {
     const deferReply = jest.fn();
     const editReply = jest.fn();
     const options = { getString: jest.fn(() => 'foo') };
-    await grep({ options, deferReply, editReply });
+    const user = { id: 'u' };
+    await grep({ options, deferReply, editReply, user });
     expect(deferReply).toHaveBeenCalledWith({ ephemeral: true });
     expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('No files') }));
   });
 
-  test('lists matching files', async () => {
+  test('lists matching files with select menu', async () => {
     driveAuthMock.getClient.mockResolvedValue({});
     gMock.listMock.mockResolvedValue({ data: { files: [{ id: '1', name: 'a.txt' }, { id: '2', name: 'b.txt' }] } });
     const deferReply = jest.fn();
     const editReply = jest.fn();
     const options = { getString: jest.fn(() => 'foo') };
-    await grep({ options, deferReply, editReply });
+    const user = { id: 'u1' };
+    await grep({ options, deferReply, editReply, user });
     expect(deferReply).toHaveBeenCalledWith({ ephemeral: true });
-    expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('https://drive.google.com/uc?id=1') }));
+    const reply = editReply.mock.calls[0][0];
+    expect(reply).toEqual(expect.objectContaining({ components: expect.any(Array) }));
+    expect(StringSelectMenuBuilder.mock.instances[0].data.options).toHaveLength(2);
+    expect(StringSelectMenuBuilder.mock.instances[0].data.customId).toBe('drive_grep_select_u1');
   });
 
   test('paginates through results', async () => {
@@ -49,9 +55,11 @@ describe('drive grep', () => {
     const deferReply = jest.fn();
     const editReply = jest.fn();
     const options = { getString: jest.fn(() => 'foo') };
-    await grep({ options, deferReply, editReply });
+    const user = { id: 'u' };
+    await grep({ options, deferReply, editReply, user });
     expect(gMock.listMock).toHaveBeenCalledTimes(2);
-    expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('https://drive.google.com/uc?id=2') }));
+    const reply = editReply.mock.calls[0][0];
+    expect(reply).toEqual(expect.objectContaining({ components: expect.any(Array) }));
   });
 
   test('handles errors gracefully', async () => {
@@ -59,8 +67,9 @@ describe('drive grep', () => {
     const deferReply = jest.fn();
     const editReply = jest.fn();
     const options = { getString: jest.fn(() => 'foo') };
+    const user = { id: 'u' };
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    await grep({ options, deferReply, editReply });
+    await grep({ options, deferReply, editReply, user });
     expect(deferReply).toHaveBeenCalledWith({ ephemeral: true });
     expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('Error') }));
     errorSpy.mockRestore();
