@@ -5,7 +5,11 @@ jest.mock('../../../utils/googleDrive', () => {
 
 jest.mock('googleapis', () => {
   const listMock = jest.fn();
-  return { google: { drive: jest.fn(() => ({ files: { list: listMock } })) }, __esModule: true, __mock: { listMock } };
+  return {
+    google: { drive: jest.fn(() => ({ files: { list: listMock } })) },
+    __esModule: true,
+    __mock: { listMock },
+  };
 });
 
 const { __mock: driveAuthMock } = require('../../../utils/googleDrive');
@@ -34,7 +38,20 @@ describe('drive grep', () => {
     const options = { getString: jest.fn(() => 'foo') };
     await grep({ options, deferReply, editReply });
     expect(deferReply).toHaveBeenCalledWith({ ephemeral: true });
-    expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('a.txt') }));
+    expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('https://drive.google.com/uc?id=1') }));
+  });
+
+  test('paginates through results', async () => {
+    driveAuthMock.getClient.mockResolvedValue({});
+    gMock.listMock
+      .mockResolvedValueOnce({ data: { files: [{ id: '1', name: 'a.txt' }], nextPageToken: 'token' } })
+      .mockResolvedValueOnce({ data: { files: [{ id: '2', name: 'b.txt' }] } });
+    const deferReply = jest.fn();
+    const editReply = jest.fn();
+    const options = { getString: jest.fn(() => 'foo') };
+    await grep({ options, deferReply, editReply });
+    expect(gMock.listMock).toHaveBeenCalledTimes(2);
+    expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('https://drive.google.com/uc?id=2') }));
   });
 
   test('handles errors gracefully', async () => {
