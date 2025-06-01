@@ -50,4 +50,21 @@ describe('coinflip command', () => {
       flags: MessageFlags.Ephemeral
     }));
   });
+
+  test('issues a challenge and completes it', async () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.3);
+    const guild = createInteraction({ subcommand: 'challenge' }).guild;
+    const challengeInteraction = createInteraction({ subcommand: 'challenge' });
+    challengeInteraction.guild = guild;
+    await coinflip.execute(challengeInteraction);
+    expect(challengeInteraction.reply).toHaveBeenCalledWith(expect.stringContaining('has challenged'));
+
+    const callInteraction = createInteraction({ subcommand: 'call', userId: 'u2', opponentId: 'u1', choice: 'heads' });
+    callInteraction.guild = guild;
+    callInteraction.client = { users: { fetch: jest.fn(id => Promise.resolve({ id })) } };
+    callInteraction.reply = jest.fn(() => Promise.resolve());
+    await coinflip.execute(callInteraction);
+    expect(callInteraction.reply).toHaveBeenCalledWith(expect.objectContaining({ embeds: expect.any(Array) }));
+    Math.random.mockRestore();
+  });
 });
