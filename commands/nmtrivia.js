@@ -78,9 +78,11 @@ module.exports = {
       }
     }, 5000);
 
-    const filter = m =>
-      m.author.id === interaction.user.id &&
-      choiceLetters.map(letter => letter.toLowerCase()).includes(m.content.toLowerCase());
+    const filter = m => {
+      if (m.author.bot) return false;
+      const firstChar = m.content.trim().charAt(0).toLowerCase();
+      return choiceLetters.map(letter => letter.toLowerCase()).includes(firstChar);
+    };
 
     const collector = interaction.channel.createMessageCollector({
       filter,
@@ -88,7 +90,7 @@ module.exports = {
     });
 
     collector.on('collect', async msg => {
-      const reply = msg.content.toUpperCase();
+      const reply = msg.content.trim().charAt(0).toUpperCase();
       const member = await interaction.guild.members.fetch(msg.author.id);
       const displayName = member.displayName;
 
