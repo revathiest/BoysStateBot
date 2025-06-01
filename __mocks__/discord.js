@@ -183,6 +183,26 @@ const SlashCommandBuilder = jest.fn(() => {
       this.options.push(option);
       return this;
     },
+    addChannelOption(fn) {
+      const option = { type: 'channel', name: undefined, description: undefined, required: false };
+      fn({
+        setName(name) { option.name = name; return this; },
+        setDescription(desc) { option.description = desc; return this; },
+        setRequired(req) { option.required = req; return this; },
+      });
+      this.options.push(option);
+      return this;
+    },
+    addBooleanOption(fn) {
+      const option = { type: 'boolean', name: undefined, description: undefined, required: false };
+      fn({
+        setName(name) { option.name = name; return this; },
+        setDescription(desc) { option.description = desc; return this; },
+        setRequired(req) { option.required = req; return this; },
+      });
+      this.options.push(option);
+      return this;
+    },
     addUserOption(fn) {
       const option = { type: 'user', name: undefined, description: undefined, required: false };
       fn({
@@ -216,6 +236,26 @@ const SlashCommandBuilder = jest.fn(() => {
             setDescription(d) { opt.description = d; return this; },
             setRequired(r) { opt.required = r; return this; },
             addChoices: jest.fn()
+          });
+          sub.options.push(opt);
+          return this;
+        },
+        addChannelOption(chanFn) {
+          const opt = { type: 'channel', name: undefined, description: undefined, required: false };
+          chanFn({
+            setName(n) { opt.name = n; return this; },
+            setDescription(d) { opt.description = d; return this; },
+            setRequired(r) { opt.required = r; return this; },
+          });
+          sub.options.push(opt);
+          return this;
+        },
+        addBooleanOption(boolFn) {
+          const opt = { type: 'boolean', name: undefined, description: undefined, required: false };
+          boolFn({
+            setName(n) { opt.name = n; return this; },
+            setDescription(d) { opt.description = d; return this; },
+            setRequired(r) { opt.required = r; return this; },
           });
           sub.options.push(opt);
           return this;
