@@ -10,6 +10,18 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
 });
 
+function getTimezoneOffset(zone, date = new Date()) {
+  const local = new Date(date.toLocaleString('en-US', { timeZone: zone }));
+  return date.getTime() - local.getTime();
+}
+
+function parseDateInZone(dateStr, zone) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const utc = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+  const offset = getTimezoneOffset(zone, utc);
+  return new Date(utc.getTime() + offset);
+}
+
 function buildEventEmbed(type, summary, startTime, location, changes = {}) {
   const embed = new EmbedBuilder()
     .setTitle('<:newmexicoflag:1370750476332564520> NM Boys & Girls State Schedule Update')
@@ -91,8 +103,12 @@ async function pollCalendars(client, onChange) {
           where: { guildId, calendarId, eventId: apiEvent.id },
         });
 
-        const startTime = new Date(apiEvent.start.dateTime || apiEvent.start.date);
-        const endTime = new Date(apiEvent.end.dateTime || apiEvent.end.date);
+        const startTime = apiEvent.start.dateTime
+          ? new Date(apiEvent.start.dateTime)
+          : parseDateInZone(apiEvent.start.date, 'America/Denver');
+        const endTime = apiEvent.end.dateTime
+          ? new Date(apiEvent.end.dateTime)
+          : parseDateInZone(apiEvent.end.date, 'America/Denver');
         const location = apiEvent.location || '';
         const summary = apiEvent.summary || '';
 
