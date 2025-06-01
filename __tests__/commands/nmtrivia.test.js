@@ -50,7 +50,13 @@ describe('nmtrivia command', () => {
       channel: { createMessageCollector: jest.fn(() => collector) }
     };
 
-    jest.spyOn(Math, 'random').mockReturnValueOnce(0.1).mockReturnValueOnce(0.2).mockReturnValueOnce(0.3).mockReturnValueOnce(0.4);
+    jest
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0.1)
+      .mockReturnValueOnce(0.2)
+      .mockReturnValueOnce(0.3)
+      .mockReturnValueOnce(0.4)
+      .mockReturnValueOnce(0.5);
     await nmtrivia.execute(interaction);
 
     await collectCb({ content: 'A', author: { id: '123', bot: false } });
@@ -89,7 +95,13 @@ describe('nmtrivia command', () => {
       channel: { createMessageCollector: jest.fn(() => collector) }
     };
 
-    jest.spyOn(Math, 'random').mockReturnValueOnce(0.1).mockReturnValueOnce(0.2).mockReturnValueOnce(0.3).mockReturnValueOnce(0.4);
+    jest
+      .spyOn(Math, 'random')
+      .mockReturnValueOnce(0.1)
+      .mockReturnValueOnce(0.2)
+      .mockReturnValueOnce(0.3)
+      .mockReturnValueOnce(0.4)
+      .mockReturnValueOnce(0.5);
     await nmtrivia.execute(interaction);
 
     endCb([], 'time');
@@ -97,5 +109,6 @@ describe('nmtrivia command', () => {
     jest.advanceTimersByTime(30000);
     Math.random.mockRestore();
     jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 });
