@@ -14,6 +14,7 @@ describe('NotificationChannel model', () => {
       expect.objectContaining({
         guildId: expect.anything(),
         channelId: expect.anything(),
+        enabled: expect.anything(),
       }),
       expect.objectContaining({ tableName: 'notification_channels' })
     );
