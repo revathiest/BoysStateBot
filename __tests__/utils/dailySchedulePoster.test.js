@@ -12,11 +12,20 @@ const mockChannel = () => ({
   messages: { fetch: jest.fn().mockResolvedValue({ edit: jest.fn() }) }
 });
 
+const getMountainOffset = (date) => {
+  const year = date.getUTCFullYear();
+  const dstStart = new Date(Date.UTC(year, 2, 8, 9));
+  while (dstStart.getUTCDay() !== 0) dstStart.setUTCDate(dstStart.getUTCDate() + 1);
+  const dstEnd = new Date(Date.UTC(year, 10, 1, 8));
+  while (dstEnd.getUTCDay() !== 0) dstEnd.setUTCDate(dstEnd.getUTCDate() + 1);
+  const inDst = date >= dstStart && date < dstEnd;
+  return (inDst ? -6 : -7) * 60 * 60 * 1000;
+};
+
 const parseDateInDenver = (dateStr) => {
   const [y, m, d] = dateStr.split('-').map(Number);
   const utc = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
-  const local = new Date(utc.toLocaleString('en-US', { timeZone: 'America/Denver' }));
-  const offset = utc.getTime() - local.getTime();
+  const offset = -getMountainOffset(utc);
   return new Date(utc.getTime() + offset);
 };
 
@@ -29,7 +38,8 @@ describe('dailySchedulePoster', () => {
   });
 
   test('isTodayMountain handles all-day events', () => {
-    const mtDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Denver' }));
+    const now = new Date();
+    const mtDate = new Date(now.getTime() - getMountainOffset(now));
     const dateStr = mtDate.toISOString().slice(0, 10);
     const allDayUtc = parseDateInDenver(dateStr);
     expect(isTodayMountain(allDayUtc)).toBe(true);
