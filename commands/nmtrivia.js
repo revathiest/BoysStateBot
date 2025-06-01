@@ -78,6 +78,10 @@ module.exports = {
       }
     }, 5000);
 
+    if (typeof countdownInterval.unref === 'function') {
+      countdownInterval.unref();
+    }
+
     const filter = m => {
       if (m.author.bot) return false;
       const firstChar = m.content.trim().charAt(0).toLowerCase();
