@@ -8,3 +8,4 @@ Reusable helper modules supporting Google Calendar and scheduling features.
 - `scheduleEmbedBuilder.js` – builds rich embeds.
 - `importTrivia.js` – loads trivia questions into the database.
 - `googleDrive.js` – helper for Google Drive API authentication.
+- `dailySchedulePoster.js` – posts the day's schedule to a configured channel.

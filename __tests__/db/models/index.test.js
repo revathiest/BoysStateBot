@@ -5,6 +5,7 @@ jest.mock('../../../db/models/CalendarConfig', () => ({ name: 'CalendarConfig', 
 jest.mock('../../../db/models/CalendarEvent', () => ({ name: 'CalendarEvent', associate: jest.fn() }));
 jest.mock('../../../db/models/NotificationChannel', () => ({ name: 'NotificationChannel', associate: jest.fn() }));
 jest.mock('../../../db/models/TriviaQuestion', () => ({ name: 'TriviaQuestion', associate: jest.fn() }));
+jest.mock('../../../db/models/ScheduleChannel', () => ({ name: 'ScheduleChannel', associate: jest.fn() }));
 
 describe('models/index.js', () => {
   beforeEach(() => {

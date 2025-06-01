@@ -52,7 +52,7 @@ function buildEventEmbed(type, summary, startTime, location, changes = {}) {
   return embed;
 }
 
-async function pollCalendars(client) {
+async function pollCalendars(client, onChange) {
   if (!client || !client.channels || typeof client.channels.fetch !== 'function') {
     throw new Error('[pollCalendars] A valid Discord client must be passed to pollCalendars(client)');
   }
@@ -107,6 +107,7 @@ async function pollCalendars(client) {
             const embed = buildEventEmbed('added', summary, startTime, location);
             await channel.send({ embeds: [embed] });
           }
+          if (onChange) await onChange(guildId, startTime);
         } else if (existing.startTime.getTime() !== startTime.getTime() || existing.location !== location) {
 
           const changes = {};
@@ -127,6 +128,7 @@ async function pollCalendars(client) {
             const embed = buildEventEmbed('updated', summary, startTime, location, changes);
             await channel.send({ embeds: [embed] });
           }
+          if (onChange) await onChange(guildId, startTime);
         }
       }
 
@@ -145,6 +147,7 @@ async function pollCalendars(client) {
           const embed = buildEventEmbed('cancelled', stale.summary, stale.startTime || new Date(), stale.location);
           await channel.send({ embeds: [embed] });
         }
+        if (onChange) await onChange(guildId, stale.startTime);
       }
 
     } catch (err) {
