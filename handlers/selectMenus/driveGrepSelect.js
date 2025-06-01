@@ -18,14 +18,28 @@ module.exports = async function driveGrepSelect(interaction) {
   try {
     const auth = await driveAuth.getClient();
     const drive = google.drive({ version: 'v3', auth });
-    const metaRes = await drive.files.get({ fileId, fields: 'name' });
-    const dataRes = await drive.files.get(
-      { fileId, alt: 'media' },
-      { responseType: 'arraybuffer' }
-    );
+    const metaRes = await drive.files.get({ fileId, fields: 'name,mimeType' });
+    let fileData;
+    let fileName = metaRes.data.name;
+
+    if (metaRes.data.mimeType.startsWith('application/vnd.google-apps')) {
+      const exportRes = await drive.files.export(
+        { fileId, mimeType: 'application/pdf' },
+        { responseType: 'arraybuffer' },
+      );
+      fileData = exportRes.data;
+      if (!fileName.endsWith('.pdf')) fileName += '.pdf';
+    } else {
+      const dataRes = await drive.files.get(
+        { fileId, alt: 'media' },
+        { responseType: 'arraybuffer' },
+      );
+      fileData = dataRes.data;
+    }
+
     await interaction.editReply({
-      content: `📥 Downloading **${metaRes.data.name}**`,
-      files: [{ attachment: Buffer.from(dataRes.data), name: metaRes.data.name }],
+      content: `📥 Downloading **${fileName}**`,
+      files: [{ attachment: Buffer.from(fileData), name: fileName }],
     });
   } catch (err) {
     console.error('[drive:grep_select] Error downloading file:', err);
