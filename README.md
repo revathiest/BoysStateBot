@@ -10,6 +10,7 @@ A multifunctional Discord bot for the **New Mexico Boys State** program 🇺🇸
 - 🛠️ **Admin Utilities:** Test database & calendar connectivity; sync models
 - ✨ Slash command support via `discord.js` v14
 - 🔌 Modular command and interaction handlers for easy extension
+- 📂 **Google Drive Search:** Find files by name or contents
 
 ## 🏗️ Project Structure
 
