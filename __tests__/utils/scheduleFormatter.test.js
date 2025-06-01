@@ -3,12 +3,10 @@ const formatScheduleList = require('../../utils/scheduleFormatter');
 
 describe('formatScheduleList', () => {
     const formatTime = (date) =>
-    new Intl.DateTimeFormat('en-US', {
+    date.toLocaleTimeString(undefined, {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false,
-      timeZone: 'America/Chicago', // or use Intl.DateTimeFormat().resolvedOptions().timeZone
-    }).format(date);
+    });
   
   it('formats a list of events', () => {
     const event1 = new Date('2025-06-01T08:00:00Z');
