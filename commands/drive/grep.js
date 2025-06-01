@@ -25,10 +25,19 @@ module.exports = async function grep(interaction) {
       return interaction.editReply({ content: `❌ No files contain **${query}**.` });
     }
 
+    const unique = [];
+    const seen = new Set();
+    for (const file of files) {
+      if (!seen.has(file.id)) {
+        unique.push(file);
+        seen.add(file.id);
+      }
+    }
+
     const menu = new StringSelectMenuBuilder()
       .setCustomId(`drive_grep_select_${interaction.user.id}`)
       .setPlaceholder('Select a file to download')
-      .addOptions(files.map(f => ({ label: f.name, value: f.id })));
+      .addOptions(unique.map(f => ({ label: f.name, value: f.id })));
 
     const row = new ActionRowBuilder().addComponents(menu);
 
