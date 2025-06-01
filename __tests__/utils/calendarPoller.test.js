@@ -91,6 +91,29 @@ describe('calendarPoller', () => {
     }));
   });
 
+  it('parses all-day events from date fields', async () => {
+    CalendarConfig.findAll.mockResolvedValue([{ guildId: '1', calendarId: 'cal', startDate: '2025-06-01', endDate: '2025-06-10' }]);
+    const allDayEvent = {
+      id: 'event2',
+      summary: 'All Day',
+      start: { date: '2025-06-08' },
+      end: { date: '2025-06-09' },
+      location: 'Loc',
+    };
+    google.calendar().events.list.mockResolvedValueOnce({ data: { items: [allDayEvent] } });
+    CalendarEvent.findOne.mockResolvedValue(undefined);
+    NotificationChannel.findOne.mockResolvedValue({ channelId: 'chan' });
+    CalendarEvent.findAll.mockResolvedValue([]);
+    const send = jest.fn();
+    mockClient.channels.fetch.mockResolvedValue({ send });
+
+    await pollCalendars(mockClient);
+
+    const created = CalendarEvent.create.mock.calls[0][0];
+    expect(created.startTime.toISOString()).toBe('2025-06-08T06:00:00.000Z');
+    expect(created.endTime.toISOString()).toBe('2025-06-09T06:00:00.000Z');
+  });
+
   it('throws if client is invalid', async () => {
     await expect(pollCalendars({})).rejects.toThrow('pollCalendars');
   });
