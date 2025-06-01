@@ -1,34 +1,50 @@
+# Codex Agent Instructions
+
+This file applies to the entire repository and supplements `agents.md`.
+
+- **Tests Required**: Every change must include corresponding tests.
+- **Coverage Requirement**: The test suite must maintain at least **80%** line coverage.
+- Use `npm test` to run tests and generate coverage reports.
+
 # NMBS Discord Bot Development Guidelines
 
 ## Purpose & Scope
 
-Defines best practices and development standards for contributors to the New Mexico Boys State Discord Bot.
+This document outlines coding standards, test expectations, deployment requirements, and GitHub practices for contributors to the New Mexico Boys State Discord Bot.
+
+---
 
 ## Coding Standards
 
 * Use **ESLint** (Airbnb or equivalent).
-* Prefer `const` unless reassignment is required.
-* Use `async/await` exclusively.
-* Write modular, reusable code.
-* Document exported functions and key logic thoroughly.
+* Prefer `const` unless reassignment is necessary.
+* Always use `async/await` — no `.then()` chains.
+* Modular, reusable code structure is required.
+* Document exported functions and maintain logical clarity.
 * Follow linting rules and minimise complexity.
-* Use dependency injection for testability.
-* Maintain separation between Discord I/O, DB logic, and utilities.
+* Inject dependencies for testability.
+* Maintain clear separation of Discord I/O, DB logic, and utilities.
 
-## Command Design
+---
+
+## Command Structure
 
 * Use `SlashCommandBuilder` (Discord.js v14).
-* Export `data` and `execute` in each command file.
-* Organise commands in logical folders.
-* Use ephemeral replies for admin/user-specific commands.
-* Prefer **Embeds** for responses.
+* Export `data` and `execute` in each command module.
+* Place commands in appropriate logical folders.
+* Use ephemeral replies for admin/user-specific interactions.
+* Prefer **Embeds** for bot responses.
+
+---
 
 ## Database Use
 
-* Use **Sequelize ORM** only.
+* Use **Sequelize ORM** exclusively.
 * Define models clearly with types, constraints, defaults.
-* Wrap DB logic in `try/catch` with clear error logs.
+* Wrap DB logic in `try/catch` with context-aware error logs.
 * Validate inputs both in Sequelize and commands.
+
+---
 
 ## Testing Protocols
 
@@ -36,63 +52,70 @@ Defines best practices and development standards for contributors to the New Mex
 * Include test files for each command/module.
 * Cover all logical branches.
 * Ensure test stability with state resets.
-* Use `beforeEach`/`afterEach` to clean mocks.
+* Use `beforeEach`/`afterEach` for mocks cleanup.
+
+---
 
 ## Git & Repo Hygiene
 
-* Name branches: `feature/`, `fix/`, `test/`, etc.
+* Feature branches: `feature/`, `fix/`, `test/`, etc.
 * Peer review all PRs.
-* Include a summary, evidence, and relevant screenshots.
-* Use clear, conventional commit messages.
+* Include a summary, evidence, and screenshots where needed.
+* Clean, conventional commit messages.
+* No stray `console.log`s — clean code only.
+
+---
 
 ## Bot Behaviour Expectations
 
 * Don’t alter nicknames unless necessary.
-* Enforce rules immediately — no delays.
+* Enforce rules immediately — no delay queues.
 * Preserve name structure/casing.
 * Log moderation actions with full context.
+
+---
 
 ## Deployment Practices
 
 * Deploy via GitHub Actions.
 * Tag releases semantically (e.g., `v1.2.3`).
-* Require passing tests and one approval before production.
+* Require passing tests and one approval before merge.
 
 ---
 
 ## ✅ Pull Request Checklist
 
-* [ ] Merged latest changes from `origin/development` or `origin/master`.
+* [ ] Merges latest changes from `origin/development` or `origin/master`.
 * [ ] Unit tests cover all new logic, including edge cases and failures.
-* [ ] Mocks validate input/output (`toHaveBeenCalledWith`, etc.).
+* [ ] Mocks validate input/output.
 * [ ] All tests pass (`npm test`).
 * [ ] `CHANGELOG.md` updated (unless trivial/internal).
 * [ ] Branch name uses correct prefix.
-* [ ] Commits are concise, descriptive, and issue-linked.
+* [ ] Commits are concise, descriptive, and linked to issues.
 * [ ] Code is clean, documented, and free of `console.log`.
 
 ---
 
-## 📁 Test Coverage Requirements
+## 📈 Test Coverage Requirements
 
 ### Coverage Goals
 
-* Target **70–80% overall line coverage**.
-* Require **80–90%** in core modules (e.g., auth, payments).
-* Accept **60–70%** in low-risk or legacy code.
+* Target **≥80% line coverage** overall.
+* Require **80–90%** in core modules (auth, payments, logic).
+* Accept **≥70%** in low-risk or legacy code.
 
 ### Principles
 
-1. Focus on business-critical/security-sensitive code.
-2. Use branch and condition coverage for logic-heavy parts.
+1. Focus on business-critical/security-sensitive logic.
+2. Use branch & condition coverage for tricky bits.
 3. Rely on code reviews to catch weak/missing tests.
-4. Generate coverage reports but don’t gate PRs solely on coverage %.
+4. Generate coverage reports but don’t gate PRs solely on %.
 
 ### Expectations
 
 * Tests must:
 
-  * Cover success, failure, edge cases.
+  * Cover success, failure, and edge cases.
   * Validate parameters and DB interactions.
   * Handle external service/data failures.
   * Confirm side effects (roles, messages, writes).
@@ -100,23 +123,23 @@ Defines best practices and development standards for contributors to the New Mex
 
 * Codex Agents:
 
-  * Review all `__tests__/` and `*.test.js` files.
+  * Review all `__tests__/*.test.js` files.
   * Fill coverage gaps where valuable.
-  * Flag weak assertions, unvalidated mocks, missing branches.
-  * Refactor with deeper checks, failure simulations, edge handling.
+  * Flag weak assertions, invalid mocks, or missing branches.
+  * Refactor with deeper checks or edge handling.
 
 ---
 
-## 🚫 Prohibited Patterns
+## ⚠️ Prohibited Patterns
 
 * Tests without behavioural validation.
 * Always-true mocks with no input checks.
-* Duplicated tests.
+* Duplicate tests.
 * Raw SQL.
 * Noisy or unscoped logging.
 
 ---
 
-Keep it clean, clear, and reliable. If you're unsure, speak up — better to ask than to assume.
+Keep it clean, clear, and reliable. If you're unsure, speak up — better to ask than assume.
 
-Onward, coders. Keep this bot razor-sharp.
+Onward, coders. Let’s keep this bot razor-sharp.
