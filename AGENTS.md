@@ -24,6 +24,7 @@ This document outlines coding standards, test expectations, deployment requireme
 * Follow linting rules and minimise complexity.
 * Inject dependencies for testability.
 * Maintain clear separation of Discord I/O, DB logic, and utilities.
+* Ensure each directory has a README.md and update them ass appropriate
 
 ---
 
@@ -137,9 +138,3 @@ This document outlines coding standards, test expectations, deployment requireme
 * Duplicate tests.
 * Raw SQL.
 * Noisy or unscoped logging.
-
----
-
-Keep it clean, clear, and reliable. If you're unsure, speak up — better to ask than assume.
-
-Onward, coders. Let’s keep this bot razor-sharp.
