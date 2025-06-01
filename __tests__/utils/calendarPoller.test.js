@@ -131,4 +131,17 @@ describe('calendarPoller', () => {
     expect(staleDestroy).toHaveBeenCalled();
     expect(send).toHaveBeenCalled();
   });
+
+  it('does not notify when channel disabled', async () => {
+    CalendarConfig.findAll.mockResolvedValue([{ guildId: '1', calendarId: 'cal', startDate: '2025-06-01', endDate: '2025-06-10' }]);
+    CalendarEvent.findOne.mockResolvedValue(undefined);
+    CalendarEvent.findAll.mockResolvedValue([]);
+    NotificationChannel.findOne.mockResolvedValue({ channelId: 'chan', enabled: false });
+    const send = jest.fn();
+    mockClient.channels.fetch.mockResolvedValue({ send });
+
+    await pollCalendars(mockClient);
+
+    expect(send).not.toHaveBeenCalled();
+  });
 });

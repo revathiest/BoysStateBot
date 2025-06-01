@@ -97,7 +97,9 @@ async function pollCalendars(client) {
         const summary = apiEvent.summary || '';
 
         const notifConfig = await NotificationChannel.findOne({ where: { guildId } });
-        const channel = notifConfig ? await client.channels.fetch(notifConfig.channelId).catch(() => null) : null;
+        const channel = notifConfig && notifConfig.enabled !== false
+          ? await client.channels.fetch(notifConfig.channelId).catch(() => null)
+          : null;
 
         if (!existing) {
           await CalendarEvent.create({ guildId, calendarId, eventId: apiEvent.id, summary, location, startTime, endTime });
@@ -136,7 +138,9 @@ async function pollCalendars(client) {
       for (const stale of staleEvents) {
         await stale.destroy();
         const notifConfig = await NotificationChannel.findOne({ where: { guildId } });
-        const channel = notifConfig ? await client.channels.fetch(notifConfig.channelId).catch(() => null) : null;
+        const channel = notifConfig && notifConfig.enabled !== false
+          ? await client.channels.fetch(notifConfig.channelId).catch(() => null)
+          : null;
         if (channel) {
           const embed = buildEventEmbed('cancelled', stale.summary, stale.startTime || new Date(), stale.location);
           await channel.send({ embeds: [embed] });

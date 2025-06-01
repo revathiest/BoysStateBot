@@ -8,6 +8,7 @@ const listChannelsHandler = require('./calendar/list-channels');
 const removeChannelHandler = require('./calendar/remove-channel');
 const setDateRangeHandler = require('./calendar/set-daterange');
 const calendarLinkHandler = require('./calendar/link');
+const toggleNotificationsHandler = require('./calendar/toggle-notifications');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -55,6 +56,10 @@ module.exports = {
               .setRequired(true)
          )
     )
+    .addSubcommand(sub =>
+      sub.setName('toggle-notifications')
+         .setDescription('Toggles schedule update notifications on or off')
+    )
     .addSubcommand(subcommand =>
       subcommand
         .setName('set-daterange')
@@ -86,6 +91,7 @@ module.exports = {
     if (sub === 'set-channel') return setChannelHandler(interaction, guildId);
     if (sub === 'list-channels') return listChannelsHandler(interaction, guildId);
     if (sub === 'remove-channel') return removeChannelHandler(interaction, guildId);
+    if (sub === 'toggle-notifications') return toggleNotificationsHandler(interaction, guildId);
     if (sub === 'set-daterange') return setDateRangeHandler(interaction, guildId);
     if (sub === 'link') return calendarLinkHandler(interaction, guildId);
   },
