@@ -3,7 +3,20 @@ const { ScheduleChannel, CalendarEvent } = require('../db/models');
 const formatScheduleList = require('./scheduleFormatter');
 const buildScheduleEmbed = require('./scheduleEmbedBuilder');
 
+function getMountainOffset(date) {
+  const year = date.getUTCFullYear();
+  const dstStart = new Date(Date.UTC(year, 2, 8, 9)); // 2am MST -> 09:00 UTC
+  while (dstStart.getUTCDay() !== 0) dstStart.setUTCDate(dstStart.getUTCDate() + 1);
+  const dstEnd = new Date(Date.UTC(year, 10, 1, 8)); // 2am MDT -> 08:00 UTC
+  while (dstEnd.getUTCDay() !== 0) dstEnd.setUTCDate(dstEnd.getUTCDate() + 1);
+  const inDst = date >= dstStart && date < dstEnd;
+  return (inDst ? -6 : -7) * 60 * 60 * 1000;
+}
+
 function getTimezoneOffset(zone, date = new Date()) {
+  if (zone === 'America/Denver') {
+    return -getMountainOffset(date);
+  }
   const local = new Date(date.toLocaleString('en-US', { timeZone: zone }));
   return date.getTime() - local.getTime();
 }
@@ -16,26 +29,22 @@ function parseDateInZone(dateStr, zone) {
 }
 
 function getMountainDayBounds(date = new Date()) {
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Denver',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const dayStr = formatter.format(date);
-  const startUtc = parseDateInZone(dayStr, 'America/Denver');
+  const offset = getTimezoneOffset('America/Denver', date);
+  const local = new Date(date.getTime() - offset);
+  const y = local.getUTCFullYear();
+  const m = local.getUTCMonth();
+  const d = local.getUTCDate();
+  const startUtc = new Date(Date.UTC(y, m, d, 0, 0, 0) + offset);
   const endUtc = new Date(startUtc.getTime() + 24 * 60 * 60 * 1000 - 1);
   return { startUtc, endUtc };
 }
 
 function isTodayMountain(date) {
-  const fmt = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Denver',
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  });
-  return fmt.format(date) === fmt.format(new Date());
+  const offsetNow = getTimezoneOffset('America/Denver', new Date());
+  const offsetDate = getTimezoneOffset('America/Denver', date);
+  const localNow = new Date(Date.now() + offsetNow).toISOString().slice(0, 10);
+  const localDate = new Date(date.getTime() + offsetDate).toISOString().slice(0, 10);
+  return localNow === localDate;
 }
 
 async function postScheduleForToday(client, guildId) {

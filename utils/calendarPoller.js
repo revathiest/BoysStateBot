@@ -10,7 +10,20 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
 });
 
+function getMountainOffset(date) {
+  const year = date.getUTCFullYear();
+  const dstStart = new Date(Date.UTC(year, 2, 8, 9));
+  while (dstStart.getUTCDay() !== 0) dstStart.setUTCDate(dstStart.getUTCDate() + 1);
+  const dstEnd = new Date(Date.UTC(year, 10, 1, 8));
+  while (dstEnd.getUTCDay() !== 0) dstEnd.setUTCDate(dstEnd.getUTCDate() + 1);
+  const inDst = date >= dstStart && date < dstEnd;
+  return (inDst ? -6 : -7) * 60 * 60 * 1000;
+}
+
 function getTimezoneOffset(zone, date = new Date()) {
+  if (zone === 'America/Denver') {
+    return -getMountainOffset(date);
+  }
   const local = new Date(date.toLocaleString('en-US', { timeZone: zone }));
   return date.getTime() - local.getTime();
 }
