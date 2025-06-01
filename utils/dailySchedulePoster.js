@@ -96,4 +96,9 @@ function scheduleDailyTask(client) {
   scheduleNext();
 }
 
-module.exports = { postScheduleForToday, scheduleDailyTask, isTodayMountain };
+module.exports = {
+  postScheduleForToday,
+  scheduleDailyTask,
+  isTodayMountain,
+  parseDateInZone,
+};

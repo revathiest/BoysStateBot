@@ -5,7 +5,12 @@ jest.mock('../../db/models', () => ({
 }));
 
 const { ScheduleChannel, CalendarEvent } = require('../../db/models');
-const { postScheduleForToday, isTodayMountain } = require('../../utils/dailySchedulePoster');
+const {
+  postScheduleForToday,
+  isTodayMountain,
+  parseDateInZone,
+  scheduleDailyTask,
+} = require('../../utils/dailySchedulePoster');
 
 const mockChannel = () => ({
   send: jest.fn().mockResolvedValue({ id: 'm1' }),
@@ -80,6 +85,24 @@ describe('dailySchedulePoster', () => {
     const [start, end] = where.startTime[Op.between];
     expect(start.toISOString()).toBe('2025-06-01T06:00:00.000Z');
     expect(end.toISOString()).toBe('2025-06-02T05:59:59.999Z');
+    jest.useRealTimers();
+  });
+
+  test('parseDateInZone converts to UTC correctly', () => {
+    const date = parseDateInZone('2025-06-01', 'America/Denver');
+    expect(date.toISOString()).toBe('2025-06-01T06:00:00.000Z');
+  });
+
+  test('scheduleDailyTask triggers posting', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2025-06-01T09:59:55Z'));
+    const fetch = jest.fn().mockResolvedValue(mockChannel());
+    const client = { channels: { fetch } };
+    ScheduleChannel.findAll.mockResolvedValue([{ guildId: 'g' }]);
+    ScheduleChannel.findOne.mockResolvedValue({ guildId: 'g', channelId: '1', save: jest.fn() });
+    CalendarEvent.findAll.mockResolvedValue([]);
+    scheduleDailyTask(client);
+    await jest.advanceTimersByTimeAsync(5000);
+    expect(fetch).toHaveBeenCalledWith('1');
     jest.useRealTimers();
   });
 });
