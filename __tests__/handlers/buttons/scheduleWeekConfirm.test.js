@@ -49,4 +49,12 @@ describe('scheduleWeekConfirm', () => {
     expect(interaction.update).toHaveBeenCalled();
     expect(buildEmbed).toHaveBeenCalled();
   });
+
+  it('handles database errors gracefully', async () => {
+    configFindOne.mockRejectedValueOnce(new Error('db fail'));
+    const interaction = { update: jest.fn(), guildId: '1' };
+    await handler(interaction);
+    expect(interaction.update).toHaveBeenCalled();
+    expect(buildEmbed).toHaveBeenCalledWith(expect.stringContaining('Error Fetching'), expect.any(String), 0xFF0000);
+  });
 });

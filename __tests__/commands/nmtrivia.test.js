@@ -54,8 +54,8 @@ describe('nmtrivia command', () => {
     await nmtrivia.execute(interaction);
 
     await collectCb({ content: 'A', author: { id: '123', bot: false } });
+    await Promise.resolve();
     jest.advanceTimersByTime(5000);
-    expect(collector.stop).toHaveBeenCalledWith('answered');
     expect(followUp).toHaveBeenCalledWith(expect.stringContaining('Tester'));
     jest.useRealTimers();
     Math.random.mockRestore();

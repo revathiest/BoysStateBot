@@ -72,4 +72,17 @@ describe('confirmClearWeek', () => {
     expect(msg).toContain('Deleted 1 events');
     expect(msg).toContain('Failed to delete: two');
   });
+
+  it('handles unexpected errors gracefully', async () => {
+    configFindOne.mockRejectedValueOnce(new Error('boom'));
+    const interaction = {
+      customId: 'confirm_clear_week_123:456',
+      user: { id: '123' },
+      guildId: '456',
+      deferReply: jest.fn(),
+      editReply: jest.fn(),
+    };
+    await handler(interaction);
+    expect(interaction.editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('Error: boom') }));
+  });
 });

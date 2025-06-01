@@ -29,4 +29,19 @@ describe('models/index.js', () => {
     expect(trivia.associate).toHaveBeenCalledWith(db);
     expect(db.sequelize).toBe(mockSequelize);
   });
+
+  it('handles models without an associate function', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const modelsDir = path.join(__dirname, '../../../db/models');
+    const original = fs.readdirSync(modelsDir);
+    jest.spyOn(fs, 'readdirSync').mockReturnValue([...original, 'NoAssociate.js']);
+
+    jest.mock('../../../db/models/NoAssociate.js', () => ({ name: 'NoAssociate' }), { virtual: true });
+
+    const db = require('../../../db/models');
+
+    expect(db.NoAssociate).toBeDefined();
+    expect(db.NoAssociate.associate).toBeUndefined();
+  });
 });

@@ -67,4 +67,25 @@ describe('coinflip command', () => {
     expect(callInteraction.reply).toHaveBeenCalledWith(expect.objectContaining({ embeds: expect.any(Array) }));
     Math.random.mockRestore();
   });
+
+  test('allows self challenge with tester role', async () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.3);
+    const interaction = createInteraction({ subcommand: 'challenge', opponentId: 'u1', testerRole: true });
+    await coinflip.execute(interaction);
+    expect(interaction.reply).toHaveBeenCalledWith(expect.stringContaining('has challenged'));
+    Math.random.mockRestore();
+  });
+
+  test('rejects challenge when one is already pending', async () => {
+    jest.spyOn(Math, 'random').mockReturnValue(0.3);
+    const guild = createInteraction({ subcommand: 'challenge' }).guild;
+    const first = createInteraction({ subcommand: 'challenge' });
+    first.guild = guild;
+    await coinflip.execute(first);
+    const second = createInteraction({ subcommand: 'challenge' });
+    second.guild = guild;
+    await coinflip.execute(second);
+    expect(second.reply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('already has a pending'), flags: MessageFlags.Ephemeral }));
+    Math.random.mockRestore();
+  });
 });
