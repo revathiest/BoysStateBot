@@ -37,17 +37,17 @@ describe('driveGrepSelect', () => {
     gMock.getMock
       .mockResolvedValueOnce({ data: { name: 'file.txt', mimeType: 'text/plain' } })
       .mockResolvedValueOnce({ data: Buffer.from('abc') });
-    const deferReply = jest.fn();
+    const deferUpdate = jest.fn();
     const editReply = jest.fn();
     const interaction = {
       customId: 'drive_grep_select_1',
       user: { id: '1' },
       values: ['fileId'],
-      deferReply,
+      deferUpdate,
       editReply,
     };
     await handler(interaction);
-    expect(deferReply).toHaveBeenCalledWith({ ephemeral: true });
+    expect(deferUpdate).toHaveBeenCalled();
     expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ files: [expect.objectContaining({ name: 'file.txt' })] }));
   });
 
@@ -55,13 +55,13 @@ describe('driveGrepSelect', () => {
     driveAuthMock.getClient.mockResolvedValue({});
     gMock.getMock.mockResolvedValueOnce({ data: { name: 'Doc', mimeType: 'application/vnd.google-apps.document' } });
     gMock.exportMock.mockResolvedValueOnce({ data: Buffer.from('pdf') });
-    const deferReply = jest.fn();
+    const deferUpdate = jest.fn();
     const editReply = jest.fn();
     const interaction = {
       customId: 'drive_grep_select_1',
       user: { id: '1' },
       values: ['fileId'],
-      deferReply,
+      deferUpdate,
       editReply,
     };
     await handler(interaction);
@@ -76,18 +76,19 @@ describe('driveGrepSelect', () => {
 
   test('handles errors gracefully', async () => {
     driveAuthMock.getClient.mockRejectedValue(new Error('bad'));
-    const deferReply = jest.fn();
+    const deferUpdate = jest.fn();
     const editReply = jest.fn();
     const interaction = {
       customId: 'drive_grep_select_1',
       user: { id: '1' },
       values: ['fileId'],
-      deferReply,
+      deferUpdate,
       editReply,
     };
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    await handler(interaction);
-    expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('Error') }));
-    errorSpy.mockRestore();
+  const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  await handler(interaction);
+  expect(deferUpdate).toHaveBeenCalled();
+  expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ content: expect.stringContaining('Error') }));
+  errorSpy.mockRestore();
   });
 });

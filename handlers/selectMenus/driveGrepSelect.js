@@ -13,7 +13,7 @@ module.exports = async function driveGrepSelect(interaction) {
   }
 
   const fileId = interaction.values[0];
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferUpdate();
 
   try {
     const auth = await driveAuth.getClient();
@@ -38,11 +38,12 @@ module.exports = async function driveGrepSelect(interaction) {
     }
 
     await interaction.editReply({
-      content: `📥 Downloading **${fileName}**`,
+      content: `📥 Download **${fileName}**`,
       files: [{ attachment: Buffer.from(fileData), name: fileName }],
+      components: [],
     });
   } catch (err) {
     console.error('[drive:grep_select] Error downloading file:', err);
-    await interaction.editReply({ content: '❌ Error downloading file.' });
+    await interaction.editReply({ content: '❌ Error downloading file.', components: [] });
   }
 };
