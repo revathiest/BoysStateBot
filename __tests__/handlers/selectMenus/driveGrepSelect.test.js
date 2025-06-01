@@ -5,7 +5,12 @@ jest.mock('../../../utils/googleDrive', () => {
 
 jest.mock('googleapis', () => {
   const getMock = jest.fn();
-  return { google: { drive: jest.fn(() => ({ files: { get: getMock } })) }, __esModule: true, __mock: { getMock } };
+  const exportMock = jest.fn();
+  return {
+    google: { drive: jest.fn(() => ({ files: { get: getMock, export: exportMock } })) },
+    __esModule: true,
+    __mock: { getMock, exportMock },
+  };
 });
 
 const { __mock: driveAuthMock } = require('../../../utils/googleDrive');
@@ -30,7 +35,7 @@ describe('driveGrepSelect', () => {
   test('downloads selected file', async () => {
     driveAuthMock.getClient.mockResolvedValue({});
     gMock.getMock
-      .mockResolvedValueOnce({ data: { name: 'file.txt' } })
+      .mockResolvedValueOnce({ data: { name: 'file.txt', mimeType: 'text/plain' } })
       .mockResolvedValueOnce({ data: Buffer.from('abc') });
     const deferReply = jest.fn();
     const editReply = jest.fn();
@@ -44,6 +49,29 @@ describe('driveGrepSelect', () => {
     await handler(interaction);
     expect(deferReply).toHaveBeenCalledWith({ ephemeral: true });
     expect(editReply).toHaveBeenCalledWith(expect.objectContaining({ files: [expect.objectContaining({ name: 'file.txt' })] }));
+  });
+
+  test('exports google docs files as pdf', async () => {
+    driveAuthMock.getClient.mockResolvedValue({});
+    gMock.getMock.mockResolvedValueOnce({ data: { name: 'Doc', mimeType: 'application/vnd.google-apps.document' } });
+    gMock.exportMock.mockResolvedValueOnce({ data: Buffer.from('pdf') });
+    const deferReply = jest.fn();
+    const editReply = jest.fn();
+    const interaction = {
+      customId: 'drive_grep_select_1',
+      user: { id: '1' },
+      values: ['fileId'],
+      deferReply,
+      editReply,
+    };
+    await handler(interaction);
+    expect(gMock.exportMock).toHaveBeenCalledWith(
+      { fileId: 'fileId', mimeType: 'application/pdf' },
+      { responseType: 'arraybuffer' },
+    );
+    expect(editReply).toHaveBeenCalledWith(
+      expect.objectContaining({ files: [expect.objectContaining({ name: 'Doc.pdf' })] }),
+    );
   });
 
   test('handles errors gracefully', async () => {
