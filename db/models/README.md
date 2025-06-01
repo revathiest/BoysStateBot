@@ -5,6 +5,9 @@ This folder contains Sequelize model definitions for the BoysStateBot database.
 Current models:
 
 - `CalendarConfig.js` → stores configured Google Calendar IDs for each guild.
+- `CalendarEvent.js` → cached events for diffing against Google Calendar.
+- `NotificationChannel.js` → channels used for schedule change notifications.
+- `ScheduleChannel.js` → channels where the daily schedule embed is posted.
 - `TriviaQuestion.js` → stores trivia questions and answers for the `/nmtrivia` command.
 
 Each model exports a function that defines the schema and associations.

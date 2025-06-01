@@ -10,6 +10,7 @@ Example:
 
 - `calendar.js` → `/calendar` command
 - `calendar/` → holds `set.js`, `edit.js`, `remove.js`, `list.js` for `/calendar set`, `/calendar edit`, etc.
+- `set_schedule_channel.js` → `/set_schedule_channel` command for daily schedule posts
 
 When adding a new command:
 

@@ -4,6 +4,7 @@ const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const commandHandler = require('./handlers/commandHandler');
 const interactionHandler = require('./handlers/interactionHandler');
 const { pollCalendars } = require('./utils/calendarPoller');
+const { scheduleDailyTask, postScheduleForToday, isTodayMountain } = require('./utils/dailySchedulePoster');
 
 const client = new Client({
   intents: [
@@ -30,10 +31,15 @@ client.login(process.env.DISCORD_TOKEN)
 client.once('ready', async () => {
   console.log(`🎉 Logged in as ${client.user.tag}`);
   await commandHandler(client);
+  scheduleDailyTask(client);
 
   // Start polling every 5 seconds
   setInterval(() => {
-    pollCalendars(client).catch(err => console.error('Poller error:', err));
+    pollCalendars(client, async (guildId, eventDate) => {
+      if (isTodayMountain(eventDate)) {
+        await postScheduleForToday(client, guildId);
+      }
+    }).catch(err => console.error('Poller error:', err));
   }, 5000);
 });
 
