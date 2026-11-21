@@ -33,7 +33,7 @@ describe('bot startup', () => {
         }
       }
       const Collection = jest.fn(() => new Map());
-      const GatewayIntentBits = { Guilds: 1, GuildMessages: 2, MessageContent: 4 };
+      const GatewayIntentBits = { Guilds: 1, GuildMessages: 2, MessageContent: 4, GuildVoiceStates: 8 };
       return { Client, Collection, GatewayIntentBits, __esModule: true, __mock: { onMock, onceMock, loginMock } };
     });
     ({ __mock } = require('discord.js'));

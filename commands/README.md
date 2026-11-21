@@ -18,3 +18,5 @@ When adding a new command:
 2. If adding subcommands, create a directory with the same name as the main command and place the subcommands inside.
 
 Permissions, options, and descriptions should be defined inside each command file using `SlashCommandBuilder`.
+
+- `transcribe.js` → `/transcribe start|stop` voice-channel transcription (handlers in `transcribe/`)

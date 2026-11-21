@@ -19,3 +19,5 @@ When adding a new model:
 1. Create a new `.js` file here.
 2. Follow the existing pattern (define the model as a function with `(sequelize, DataTypes)`).
 3. Register it in `/db/models/index.js`.
+
+- `Transcript.js` – saved voice transcripts (`transcripts` table)
