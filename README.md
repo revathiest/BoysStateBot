@@ -10,7 +10,7 @@ A multifunctional Discord bot for the **New Mexico Boys State** program 🇺🇸
 - 🛠️ **Admin Utilities:** Test database & calendar connectivity; sync models
 - ✨ Slash command support via `discord.js` v14
 - 🔌 Modular command and interaction handlers for easy extension
-- 📂 **Google Drive Search:** Authorized staff (Director, Office Staff, Senior Counselor, Junior Counselor) can find files by name or text, pick a result from a dropdown, and the bot will download the private file for you
+- 📂 **Google Drive Search:** Find files by name or text, pick a result from a dropdown, and the bot will download the private file for you
 - 🔕 **Toggle Schedule Notifications**: Pause and resume calendar update posts
 
 ## 🏗️ Project Structure

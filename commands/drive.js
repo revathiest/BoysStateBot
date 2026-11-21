@@ -2,13 +2,11 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const searchHandler = require('./drive/search');
 const grepHandler = require('./drive/grep');
 
-const ALLOWED_ROLES = ['Director', 'Office Staff', 'Senior Counselor', 'Junior Counselor'];
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('drive')
     .setDescription('Google Drive utilities.')
-    .setDefaultMemberPermissions(null)
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setDMPermission(false)
     .addSubcommand(sub =>
       sub.setName('search')
@@ -25,14 +23,6 @@ module.exports = {
         )
     ),
   async execute(interaction) {
-    const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
-    const hasAllowedRole = interaction.member.roles.cache.some(r => ALLOWED_ROLES.includes(r.name));
-    if (!isAdmin && !hasAllowedRole) {
-      return interaction.reply({
-        content: '🚫 Permission Denied',
-        ephemeral: true,
-      });
-    }
     const sub = interaction.options.getSubcommand();
     if (sub === 'search') {
       return searchHandler(interaction);
