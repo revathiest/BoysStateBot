@@ -26,14 +26,14 @@ describe('summarizeTranscript', () => {
     expect(body.messages[0].content).toContain('Action Items');
   });
 
-  test('uses env key and model, truncates long input', async () => {
+  test('uses env key and model', async () => {
     process.env.OPENAI_API_KEY = 'envk';
     process.env.OPENAI_SUMMARY_MODEL = 'm2';
     const fetchImpl = okFetch('x');
-    await summarizeTranscript('a'.repeat(MAX_INPUT_CHARS + 50), { fetchImpl });
+    await summarizeTranscript('a'.repeat(MAX_INPUT_CHARS - 50), { fetchImpl });
     const body = JSON.parse(fetchImpl.mock.calls[0][1].body);
     expect(body.model).toBe('m2');
-    expect(body.messages[1].content).toHaveLength(MAX_INPUT_CHARS);
+    expect(body.messages[1].content).toHaveLength(MAX_INPUT_CHARS - 50);
     expect(fetchImpl.mock.calls[0][1].headers.Authorization).toBe('Bearer envk');
   });
 

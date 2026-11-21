@@ -128,14 +128,26 @@ describe('transcribe command', () => {
       await cmd.execute(i);
       const desc = i.editReply.mock.calls[0][0].embeds[0].description;
       expect(desc).toContain('4 entries');
-      expect(desc).toContain('posted and saved');
+      expect(desc).toContain('Transcript posted.');
+      expect(desc).toContain('Saved to the database');
     });
 
     test('warns when the DB save failed', async () => {
-      manager.finish.mockResolvedValue({ saved: false, entryCount: 1 });
+      manager.finish.mockResolvedValue({ saved: false, entryCount: 1, saveError: 'disk full' });
       const i = makeInteraction({ sub: 'stop' });
       await cmd.execute(i);
-      expect(i.editReply.mock.calls[0][0].embeds[0].description).toContain('saving to the database failed');
+      expect(i.editReply.mock.calls[0][0].embeds[0].description).toContain('Database save failed: disk full');
+    });
+
+    test('spells out summary and post failures', async () => {
+      manager.finish.mockResolvedValue({
+        saved: true, entryCount: 2, summaryError: 'API 429', postError: 'Missing Access',
+      });
+      const i = makeInteraction({ sub: 'stop' });
+      await cmd.execute(i);
+      const desc = i.editReply.mock.calls[0][0].embeds[0].description;
+      expect(desc).toContain('Summary failed: API 429');
+      expect(desc).toContain('Could not post the transcript: Missing Access');
     });
 
     test('reports unexpected errors', async () => {

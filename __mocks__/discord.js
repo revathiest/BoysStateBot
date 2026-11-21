@@ -146,8 +146,10 @@ const ButtonStyle = {
   Secondary: 2,
 };
 
-const AttachmentBuilder = jest.fn(function(path) {
+const AttachmentBuilder = jest.fn(function(path, options = {}) {
   this.path = path;
+  this.attachment = path;
+  this.name = options.name;
 });
 
 const SlashCommandBuilder = jest.fn(() => {

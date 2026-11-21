@@ -2,6 +2,7 @@
 // Minimal OpenAI Whisper client (uses Node's built-in fetch/FormData).
 
 const ENDPOINT = 'https://api.openai.com/v1/audio/transcriptions';
+const REQUEST_TIMEOUT_MS = 60000;
 
 /**
  * Transcribe a WAV buffer with OpenAI's transcription API.
@@ -29,6 +30,7 @@ async function transcribeAudio(wav, opts = {}) {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}` },
     body: form,
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) {
     const detail = await res.text().catch(() => '');

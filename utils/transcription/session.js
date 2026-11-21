@@ -10,6 +10,7 @@ const MAX_UTTERANCE_SECONDS = 120;
 const SILENCE_MS = 1200;
 const READY_TIMEOUT_MS = 20000;
 const RECONNECT_TIMEOUT_MS = 5000;
+const STOP_FLUSH_TIMEOUT_MS = 90000;
 
 function defaultDeps() {
   // Loaded lazily so unit tests and non-voice code paths never need voice libs.
@@ -143,7 +144,11 @@ async function startSession({ voiceChannel, resolveName, onDisconnect, deps }) {
     stopped = true;
     try { connection.destroy(); } catch (err) { /* already destroyed */ }
     await new Promise(resolve => setImmediate(resolve)); // let in-flight speech flush
-    await Promise.allSettled([...pending]);
+    // Bounded wait so one stuck API call can never block the final transcript.
+    await Promise.race([
+      Promise.allSettled([...pending]),
+      new Promise(resolve => { setTimeout(resolve, STOP_FLUSH_TIMEOUT_MS).unref?.(); }),
+    ]);
     return { entries, startedAt, endedAt: new Date() };
   }
 
@@ -154,4 +159,5 @@ module.exports = {
   startSession,
   MIN_UTTERANCE_SECONDS,
   MAX_UTTERANCE_SECONDS,
+  STOP_FLUSH_TIMEOUT_MS,
 };

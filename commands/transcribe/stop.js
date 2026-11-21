@@ -1,6 +1,15 @@
 const { MessageFlags } = require('discord.js');
 const manager = require('../../utils/transcription/manager');
 
+/** Build the stop-reply text, spelling out anything that went wrong. */
+function describe(result) {
+  const lines = [`${result.entryCount} entries captured.`];
+  lines.push(result.postError ? `❌ Could not post the transcript: ${result.postError}` : 'Transcript posted.');
+  lines.push(result.saved ? 'Saved to the database.' : `⚠️ Database save failed: ${result.saveError}`);
+  if (result.summaryError) lines.push(`⚠️ Summary failed: ${result.summaryError}`);
+  return lines.join('\n');
+}
+
 /**
  * Handle `/transcribe stop`.
  * @param {import('discord.js').ChatInputCommandInteraction} interaction
@@ -17,7 +26,7 @@ module.exports = async function stop(interaction) {
     result = await manager.finish(interaction.guild.id);
   } catch (err) {
     console.error('Failed to finish transcription:', err);
-    return interaction.editReply({ embeds: [{ title: '❌ Error', description: 'Something went wrong while finishing the transcript.', color: 0xFF0000 }] });
+    return interaction.editReply({ embeds: [{ title: '❌ Error', description: `Something went wrong while finishing the transcript: ${err.message}`, color: 0xFF0000 }] });
   }
 
   if (!result) {
@@ -26,8 +35,8 @@ module.exports = async function stop(interaction) {
   return interaction.editReply({
     embeds: [{
       title: '⏹️ Transcription Stopped',
-      description: `${result.entryCount} entries captured. ${result.saved ? 'Transcript posted and saved.' : 'Transcript posted, but saving to the database failed.'}`,
-      color: 0x2ECC71,
+      description: describe(result),
+      color: (result.postError || !result.saved || result.summaryError) ? 0xF39C12 : 0x2ECC71,
     }],
   });
 };

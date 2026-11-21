@@ -67,7 +67,7 @@ describe('transcription manager', () => {
     await manager.begin({ guild: c.guild, voiceChannel: c.voiceChannel, textChannel: c.textChannel, startedBy: 'me', start: c.start });
     const result = await manager.finish(c.guild.id, { Transcript: c.Transcript });
 
-    expect(result).toEqual({ saved: true, entryCount: 1 });
+    expect(result).toMatchObject({ saved: true, entryCount: 1 });
     expect(c.Transcript.create).toHaveBeenCalledWith(expect.objectContaining({
       guildId: c.guild.id, voiceChannelId: 'v1', textChannelId: 't1', startedBy: 'me', entryCount: 1,
       content: expect.stringContaining('Amy: hi'),
@@ -91,7 +91,7 @@ describe('transcription manager', () => {
     const c = setup();
     c.textChannel.send.mockRejectedValue(new Error('no perms'));
     await manager.begin({ guild: c.guild, voiceChannel: c.voiceChannel, textChannel: c.textChannel, startedBy: 'me', start: c.start });
-    await expect(manager.finish(c.guild.id, { Transcript: c.Transcript })).resolves.toEqual({ saved: true, entryCount: 1 });
+    await expect(manager.finish(c.guild.id, { Transcript: c.Transcript })).resolves.toMatchObject({ saved: true, entryCount: 1 });
   });
 
   test('finish returns null when nothing is active', async () => {
@@ -118,13 +118,13 @@ describe('transcription manager', () => {
     expect(manager.getActive(c.guild.id)).toBeUndefined();
   });
 
-  test('disconnect finish errors are logged', async () => {
+  test('disconnect with a failing stop still logs why', async () => {
     const c = setup();
     c.session.stop.mockRejectedValue(new Error('boom'));
     await manager.begin({ guild: c.guild, voiceChannel: c.voiceChannel, textChannel: c.textChannel, startedBy: 'me', start: c.start });
     c.start.mock.calls[0][0].onDisconnect();
     await new Promise(resolve => setImmediate(resolve));
-    expect(errSpy).toHaveBeenCalledWith(expect.stringContaining('disconnect'), expect.any(Error));
+    expect(errSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to stop transcription session'), expect.any(Error));
   });
 });
 
